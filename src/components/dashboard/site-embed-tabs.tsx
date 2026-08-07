@@ -1,8 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { CopyIcon, CheckIcon } from "@/components/icons";
 import { cn } from "@/lib/utils";
+
+/** L'origine ne change jamais pendant la vie de la page : rien à souscrire. */
+const noopSubscribe = () => () => {};
 
 type Snippet = {
   id: string;
@@ -22,14 +25,25 @@ type Snippet = {
  */
 export function SiteEmbedTabs({
   siteKey,
-  origin,
+  origin: fallbackOrigin,
   showWall,
 }: {
   siteKey: string;
+  /** Origine de repli pour le rendu serveur. */
   origin: string;
   /** Le mur d'avis n'a de sens qu'en mode Reviews. */
   showWall: boolean;
 }) {
+  // L'origine réelle du navigateur fait autorité : le snippet pointe donc
+  // toujours vers le domaine depuis lequel le dashboard est consulté.
+  // Sans ça, un NEXT_PUBLIC_SITE_URL mal configuré en production livrerait
+  // à vos clients un script pointant vers http://localhost:3000.
+  const origin = useSyncExternalStore(
+    noopSubscribe,
+    () => window.location.origin,
+    () => fallbackOrigin,
+  );
+
   const scriptTag = `<script src="${origin}/w.js" data-site="${siteKey}" async></script>`;
   const wallTag = `<div data-wizecatch-wall></div>`;
 

@@ -74,10 +74,39 @@ export async function signUpWithPassword(
   redirect("/dashboard");
 }
 
+/**
+ * Origine réelle de la requête.
+ *
+ * En production derrière un proxy (Vercel), l'en-tête `host` est celui de
+ * l'instance interne : c'est `x-forwarded-host` qui porte le domaine public.
+ * On ne se repose pas sur NEXT_PUBLIC_SITE_URL, qui serait resté sur
+ * localhost si on oubliait de le définir dans les variables Vercel.
+ */
+async function requestOrigin(): Promise<string> {
+  const h = await headers();
+
+  const forwardedHost = h.get("x-forwarded-host");
+  if (forwardedHost) {
+    const protocol = h.get("x-forwarded-proto") ?? "https";
+    return `${protocol}://${forwardedHost}`;
+  }
+
+  const origin = h.get("origin");
+  if (origin) return origin;
+
+  const host = h.get("host");
+  if (host) {
+    const protocol = host.startsWith("localhost") ? "http" : "https";
+    return `${protocol}://${host}`;
+  }
+
+  return process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+}
+
 /** Démarre le flux OAuth Google — renvoie l'URL fournie par Supabase. */
 export async function signInWithGoogle(formData: FormData): Promise<void> {
   const next = safeNext(formData.get("next"));
-  const origin = (await headers()).get("origin") ?? process.env.NEXT_PUBLIC_SITE_URL!;
+  const origin = await requestOrigin();
 
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signInWithOAuth({

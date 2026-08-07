@@ -10,9 +10,17 @@ import { createClient } from "@/lib/supabase/server";
  * Supabase renvoie un `code` à usage unique que l'on échange contre une session.
  */
 export async function GET(request: NextRequest) {
-  const { searchParams, origin } = new URL(request.url);
+  const { searchParams } = new URL(request.url);
   const code = searchParams.get("code");
   const next = searchParams.get("next") ?? "/dashboard";
+
+  // Derrière le proxy Vercel, request.url porte l'hôte interne : les
+  // redirections atterriraient sur une URL inaccessible au visiteur.
+  // x-forwarded-host contient le domaine public réel.
+  const forwardedHost = request.headers.get("x-forwarded-host");
+  const origin = forwardedHost
+    ? `${request.headers.get("x-forwarded-proto") ?? "https"}://${forwardedHost}`
+    : new URL(request.url).origin;
 
   // Google peut renvoyer une erreur (consentement refusé, compte non autorisé…)
   const error = searchParams.get("error_description") ?? searchParams.get("error");
