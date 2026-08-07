@@ -7,17 +7,13 @@ import type { Topology } from "topojson-specification";
 import type { Feature, Geometry } from "geojson";
 import worldTopo from "world-atlas/countries-110m.json";
 import { FlagIcon } from "@/components/flag-icon";
+import { countryName, countryMapName } from "@/lib/geo/countries";
 
 const WIDTH = 800;
 const HEIGHT = 400;
 
 type CountryProps = { name: string };
 type CountryFeature = Feature<Geometry, CountryProps>;
-
-/** world-atlas uses a few long-form names; map ours onto theirs. */
-const NAME_ALIASES: Record<string, string> = {
-  "United States": "United States of America",
-};
 
 // Built once at module scope: same output on server and client, so no hydration drift.
 const countries = (() => {
@@ -71,10 +67,12 @@ function fillForRatio(ratio: number): string {
 export function WorldMap({ data }: { data: { country: string; visits: number }[] }) {
   const [hovered, setHovered] = useState<{ name: string; visits: number } | null>(null);
 
+  // Les données portent des codes ISO ("NE"), le jeu cartographique des noms
+  // ("Niger") : on convertit une fois pour indexer les deux sens.
   const { visitsByMapName, maxVisits } = useMemo(() => {
     const lookup = new Map<string, number>();
     for (const row of data) {
-      lookup.set(NAME_ALIASES[row.country] ?? row.country, row.visits);
+      lookup.set(countryMapName(row.country), row.visits);
     }
     return {
       visitsByMapName: lookup,
@@ -82,11 +80,11 @@ export function WorldMap({ data }: { data: { country: string; visits: number }[]
     };
   }, [data]);
 
-  /** Map back to our own country label so the flag lookup keeps working. */
-  const ourNameFor = useMemo(() => {
+  /** Nom de la carte → code ISO, pour retrouver le drapeau au survol. */
+  const codeForMapName = useMemo(() => {
     const reverse = new Map<string, string>();
     for (const row of data) {
-      reverse.set(NAME_ALIASES[row.country] ?? row.country, row.country);
+      reverse.set(countryMapName(row.country), row.country);
     }
     return reverse;
   }, [data]);
@@ -131,9 +129,12 @@ export function WorldMap({ data }: { data: { country: string; visits: number }[]
 
       {hovered && (
         <div className="pointer-events-none absolute right-3 top-3 flex items-center gap-2 rounded-lg bg-white px-3 py-1.5 text-sm shadow-md ring-1 ring-zinc-200">
-          <FlagIcon country={ourNameFor.get(hovered.name) ?? hovered.name} className="h-3.5 w-5" />
+          <FlagIcon
+            country={codeForMapName.get(hovered.name) ?? ""}
+            className="h-3.5 w-5"
+          />
           <span className="font-medium text-zinc-800">
-            {ourNameFor.get(hovered.name) ?? hovered.name}
+            {countryName(codeForMapName.get(hovered.name)) || hovered.name}
           </span>
           <span className="text-zinc-400">{hovered.visits} visits</span>
         </div>

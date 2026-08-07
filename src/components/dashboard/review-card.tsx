@@ -5,6 +5,7 @@ import { ThumbsRating } from "@/components/thumbs-rating";
 import { NPSDisplay } from "@/components/nps-display";
 import { MapPinIcon, QuoteIcon } from "@/components/icons";
 import { ReviewModeration } from "@/components/dashboard/review-moderation";
+import { countryName } from "@/lib/geo/countries";
 import type { Review, ReviewStatus } from "@/lib/mock-data";
 
 const statusVariant: Record<ReviewStatus, "green" | "yellow" | "neutral"> = {
@@ -83,7 +84,8 @@ export function ReviewCard({
             <p className="text-sm font-medium text-zinc-900">{review.authorName}</p>
             <div className="mt-0.5 flex items-center gap-1 text-xs text-zinc-500">
               <MapPinIcon className="h-3.5 w-3.5" />
-              {review.city}, {review.country}
+              {/* La base stocke un code ISO ; on affiche le nom lisible. */}
+              {[review.city, countryName(review.country)].filter(Boolean).join(", ")}
             </div>
           </div>
         </div>

@@ -51,7 +51,7 @@ function Stripes({
 }
 
 const flagsByCountry: Record<string, (className?: string) => React.ReactElement> = {
-  "United States": (className) => (
+  US: (className) => (
     <Flag className={className}>
       <rect width="30" height="20" fill="#B22234" />
       {[0, 2, 4, 6, 8, 10].map((i) => (
@@ -60,10 +60,10 @@ const flagsByCountry: Record<string, (className?: string) => React.ReactElement>
       <rect width="14" height={(20 / 13) * 7} fill="#3C3B6E" />
     </Flag>
   ),
-  Germany: (className) => (
+  DE: (className) => (
     <Stripes className={className} colors={["#000000", "#DD0000", "#FFCE00"]} />
   ),
-  "United Kingdom": (className) => (
+  GB: (className) => (
     <Flag className={className}>
       <rect width="30" height="20" fill="#00247D" />
       <path d="M0 0 L30 20 M30 0 L0 20" stroke="#ffffff" strokeWidth="4" />
@@ -74,7 +74,7 @@ const flagsByCountry: Record<string, (className?: string) => React.ReactElement>
       <rect y="8.2" width="30" height="3.6" fill="#CF142B" />
     </Flag>
   ),
-  Canada: (className) => (
+  CA: (className) => (
     <Flag className={className}>
       <rect width="30" height="20" fill="#ffffff" />
       <rect width="7.5" height="20" fill="#FF0000" />
@@ -85,10 +85,10 @@ const flagsByCountry: Record<string, (className?: string) => React.ReactElement>
       />
     </Flag>
   ),
-  France: (className) => (
+  FR: (className) => (
     <Stripes className={className} colors={["#0055A4", "#ffffff", "#EF4135"]} direction="vertical" />
   ),
-  Australia: (className) => (
+  AU: (className) => (
     <Flag className={className}>
       <rect width="30" height="20" fill="#00008B" />
       <rect width="15" height="10" fill="#00247D" />
@@ -109,60 +109,77 @@ const flagsByCountry: Record<string, (className?: string) => React.ReactElement>
       ))}
     </Flag>
   ),
-  Netherlands: (className) => (
+  NL: (className) => (
     <Stripes className={className} colors={["#AE1C28", "#ffffff", "#21468B"]} />
   ),
-  Brazil: (className) => (
+  BR: (className) => (
     <Flag className={className}>
       <rect width="30" height="20" fill="#009739" />
       <path d="M15 3 L27 10 L15 17 L3 10 Z" fill="#FEDD00" />
       <circle cx="15" cy="10" r="4" fill="#012169" />
     </Flag>
   ),
-  India: (className) => (
+  IN: (className) => (
     <Stripes className={className} colors={["#FF9933", "#ffffff", "#138808"]} />
   ),
-  Japan: (className) => (
+  JP: (className) => (
     <Flag className={className}>
       <rect width="30" height="20" fill="#ffffff" />
       <circle cx="15" cy="10" r="5.5" fill="#BC002D" />
     </Flag>
   ),
-  Ireland: (className) => (
+  IE: (className) => (
     <Stripes className={className} colors={["#169B62", "#ffffff", "#FF883E"]} direction="vertical" />
   ),
-  Portugal: (className) => (
+  PT: (className) => (
     <Flag className={className}>
       <rect width="30" height="20" fill="#FF0000" />
       <rect width="12" height="20" fill="#006600" />
       <circle cx="12" cy="10" r="3.4" fill="#FFCC00" stroke="#ffffff" strokeWidth="0.5" />
     </Flag>
   ),
-  Sweden: (className) => (
+  SE: (className) => (
     <Flag className={className}>
       <rect width="30" height="20" fill="#006AA7" />
       <rect x="10" width="4" height="20" fill="#FECC00" />
       <rect y="8" width="30" height="4" fill="#FECC00" />
     </Flag>
   ),
-  Spain: (className) => (
+  ES: (className) => (
     <Flag className={className}>
       <rect width="30" height="20" fill="#AA151B" />
       <rect y="5" width="30" height="10" fill="#F1BF00" />
     </Flag>
   ),
-  Poland: (className) => <Stripes className={className} colors={["#ffffff", "#DC143C"]} />,
+  PL: (className) => <Stripes className={className} colors={["#ffffff", "#DC143C"]} />,
 };
 
+/**
+ * Drapeau d'un pays à partir de son code ISO alpha-2 ("FR", "NE", "US").
+ *
+ * Seuls les pays les plus fréquents sont dessinés à la main. Pour tous les
+ * autres, on affiche le code sur une pastille : c'est informatif et volontaire,
+ * là où un carré gris vide passerait pour un bug.
+ *
+ * (Les emoji drapeaux seraient la solution évidente, mais Windows ne les rend
+ * pas — c'est ce qui nous avait déjà fait basculer vers du SVG.)
+ */
 export function FlagIcon({ country, className }: { country: string; className?: string }) {
-  const render = flagsByCountry[country];
-  if (!render) {
-    return (
-      <span
-        className={cn(DEFAULT_SIZE, "shrink-0 rounded-[3px] bg-zinc-200 ring-1 ring-black/10", className)}
-        aria-hidden="true"
-      />
-    );
-  }
-  return render(className);
+  const code = (country ?? "").trim().toUpperCase();
+  const render = flagsByCountry[code];
+
+  if (render) return render(className);
+
+  return (
+    <span
+      className={cn(
+        DEFAULT_SIZE,
+        "flex shrink-0 items-center justify-center rounded-[3px] bg-zinc-100 text-[8px] font-bold leading-none tracking-tight text-zinc-500 ring-1 ring-black/10",
+        className,
+      )}
+      title={code}
+    >
+      {code.length === 2 ? code : "?"}
+    </span>
+  );
 }

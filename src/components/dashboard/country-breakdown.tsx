@@ -1,4 +1,5 @@
 import { FlagIcon } from "@/components/flag-icon";
+import { countryName } from "@/lib/geo/countries";
 
 export function CountryBreakdown({ data }: { data: { country: string; visits: number }[] }) {
   const max = Math.max(...data.map((item) => item.visits), 1);
@@ -7,9 +8,10 @@ export function CountryBreakdown({ data }: { data: { country: string; visits: nu
     <div className="space-y-2.5">
       {data.map((item) => (
         <div key={item.country} className="flex items-center gap-3">
-          <span className="flex w-32 shrink-0 items-center gap-2 truncate text-sm text-zinc-700">
+          <span className="flex w-36 shrink-0 items-center gap-2 truncate text-sm text-zinc-700">
             <FlagIcon country={item.country} />
-            <span className="truncate">{item.country}</span>
+            {/* La base stocke un code ISO ; on affiche le nom lisible. */}
+            <span className="truncate">{countryName(item.country)}</span>
           </span>
           <div className="h-2 flex-1 overflow-hidden rounded-full bg-zinc-100">
             <div
