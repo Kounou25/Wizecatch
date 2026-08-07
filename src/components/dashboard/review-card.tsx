@@ -4,6 +4,7 @@ import { StarRating } from "@/components/star-rating";
 import { ThumbsRating } from "@/components/thumbs-rating";
 import { NPSDisplay } from "@/components/nps-display";
 import { MapPinIcon, QuoteIcon } from "@/components/icons";
+import { ReviewModeration } from "@/components/dashboard/review-moderation";
 import type { Review, ReviewStatus } from "@/lib/mock-data";
 
 const statusVariant: Record<ReviewStatus, "green" | "yellow" | "neutral"> = {
@@ -59,7 +60,14 @@ function RatingIndicator({ review }: { review: Review }) {
   }
 }
 
-export function ReviewCard({ review }: { review: Review }) {
+export function ReviewCard({
+  review,
+  moderatable = false,
+}: {
+  review: Review;
+  /** Affiche les actions de modération (désactivé pour les données de démo). */
+  moderatable?: boolean;
+}) {
   const isTestimonial = review.templateId === "testimonial";
 
   return (
@@ -102,6 +110,10 @@ export function ReviewCard({ review }: { review: Review }) {
       )}
 
       <p className="mt-3 text-xs text-zinc-400">{formatDate(review.date)}</p>
+
+      {moderatable && (
+        <ReviewModeration reviewId={review.id} status={review.status} />
+      )}
     </Card>
   );
 }

@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Wizecatch — page de test du widget</title>
+    <style>
+      body {
+        font-family: system-ui, sans-serif;
+        max-width: 40rem;
+        margin: 4rem auto;
+        padding: 0 1.5rem;
+        color: #18181b;
+        line-height: 1.6;
+      }
+      code {
+        background: #f4f4f5;
+        padding: 0.15rem 0.4rem;
+        border-radius: 4px;
+        font-size: 0.9em;
+      }
+      .box {
+        background: #faf5ff;
+        border: 1px solid #e9d5ff;
+        border-radius: 12px;
+        padding: 1rem 1.25rem;
+        margin: 1.5rem 0;
+      }
+      nav a {
+        margin-right: 1rem;
+      }
+      input {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid #d4d4d8;
+        border-radius: 8px;
+        font-size: 1rem;
+      }
+      button {
+        background: #7c3aed;
+        color: white;
+        border: 0;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        cursor: pointer;
+        margin-top: 0.5rem;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Page de test du widget</h1>
+
+    <div class="box">
+      <p><strong>Mode d'emploi</strong></p>
+      <ol>
+        <li>Créez un site dans le dashboard et copiez sa clé publique (<code>wz_…</code>)</li>
+        <li>Collez-la ci-dessous puis validez — la page se recharge avec le widget actif</li>
+        <li>Naviguez entre les liens, puis <strong>fermez l'onglet</strong> pour déclencher l'envoi de la durée</li>
+        <li>Vérifiez la table <code>sessions</code> dans Supabase</li>
+      </ol>
+
+      <form onsubmit="event.preventDefault(); location.search = '?site=' + encodeURIComponent(document.getElementById('k').value.trim());">
+        <input id="k" placeholder="wz_xxxxxxxxxxxx" />
+        <button type="submit">Charger le widget</button>
+      </form>
+    </div>
+
+    <p id="status"></p>
+
+    <nav>
+      <a href="?site=SITEKEY&page=pricing">/pricing</a>
+      <a href="?site=SITEKEY&page=docs">/docs</a>
+      <a href="?site=SITEKEY&page=blog">/blog</a>
+    </nav>
+
+    <p>
+      Chaque clic compte une page vue supplémentaire dans la session en cours.
+      La durée n'est envoyée qu'à la fermeture de l'onglet ou au changement
+      d'application.
+    </p>
+
+    <hr style="margin: 2.5rem 0; border: 0; border-top: 1px solid #e4e4e7" />
+
+    <h2>Mur d'avis</h2>
+    <p>
+      La balise ci-dessous est remplie par le script avec les avis
+      <strong>publiés</strong> uniquement. Si rien n'apparaît, c'est qu'aucun
+      avis n'est encore publié — allez en publier un depuis le dashboard.
+    </p>
+
+    <!-- C'est tout ce que le client a besoin d'ajouter -->
+    <div data-wizecatch-wall></div>
+
+    <script>
+      // Récupère la clé depuis l'URL et injecte le widget dynamiquement,
+      // afin de pouvoir tester sans modifier ce fichier.
+      (function () {
+        var params = new URLSearchParams(location.search);
+        var key = params.get("site");
+        var status = document.getElementById("status");
+
+        // Répercute la clé sur les liens de navigation.
+        document.querySelectorAll("nav a").forEach(function (a) {
+          a.href = a.getAttribute("href").replace("SITEKEY", key || "");
+        });
+
+        if (!key) {
+          status.textContent = "Aucune clé fournie — le widget n'est pas chargé.";
+          return;
+        }
+
+        document.getElementById("k").value = key;
+        status.innerHTML =
+          "Widget actif avec la clé <code>" + key + "</code>. Ouvrez l'onglet Réseau pour voir les requêtes.";
+
+        var s = document.createElement("script");
+        s.src = "/w.js";
+        s.setAttribute("data-site", key);
+        s.async = true;
+        document.body.appendChild(s);
+      })();
+    </script>
+  </body>
+</html>

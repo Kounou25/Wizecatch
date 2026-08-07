@@ -197,6 +197,12 @@ const en = {
     },
     embedScript: "Embed script",
     embedScriptDesc: "Paste this snippet before the closing </body> tag.",
+    wallTitle: "Display your reviews",
+    wallDesc: "Paste this anywhere on your page — published reviews will appear there.",
+    wallHint:
+      "Only published reviews are shown. The layout follows the format set in Widget settings.",
+    embedBothDesc:
+      "Add the script once, then place the wall tag wherever you want your reviews to appear.",
     modeLabel: "Mode",
     templateLabel: "Template",
     notFoundTitle: "Site not found",
@@ -251,6 +257,12 @@ const en = {
     trigger: "Trigger",
     format: "Display format",
     save: "Save changes",
+    formSection: "Review collection form",
+    formSectionDesc: "The prompt shown to visitors so they can leave a review.",
+    wallSection: "Reviews wall",
+    wallSectionDesc:
+      "How published reviews are laid out inside your <div data-wizecatch-wall> tag.",
+    preview: "Preview",
   },
   settings: {
     title: "Settings",
@@ -475,6 +487,13 @@ const fr: Dictionary = {
     },
     embedScript: "Script d'intégration",
     embedScriptDesc: "Collez ce code avant la balise fermante </body>.",
+    wallTitle: "Afficher vos avis",
+    wallDesc:
+      "Collez ceci où vous voulez sur votre page — les avis publiés y apparaîtront.",
+    wallHint:
+      "Seuls les avis publiés sont affichés. La mise en page suit le format choisi dans les paramètres du widget.",
+    embedBothDesc:
+      "Ajoutez le script une fois, puis placez la balise du mur là où vous voulez voir vos avis.",
     modeLabel: "Mode",
     templateLabel: "Modèle",
     notFoundTitle: "Site introuvable",
@@ -529,6 +548,13 @@ const fr: Dictionary = {
     trigger: "Déclencheur",
     format: "Format d'affichage",
     save: "Enregistrer",
+    formSection: "Formulaire de collecte",
+    formSectionDesc:
+      "L'invitation affichée aux visiteurs pour qu'ils laissent un avis.",
+    wallSection: "Mur d'avis",
+    wallSectionDesc:
+      "La mise en page des avis publiés à l'intérieur de votre balise <div data-wizecatch-wall>.",
+    preview: "Aperçu",
   },
   settings: {
     title: "Paramètres",

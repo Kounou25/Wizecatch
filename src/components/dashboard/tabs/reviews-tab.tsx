@@ -1,12 +1,14 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import { ReviewCard } from "@/components/dashboard/review-card";
 import { EmptyState } from "@/components/dashboard/empty-state";
+import { ReviewCardSkeleton } from "@/components/dashboard/skeleton";
 import { InboxIcon } from "@/components/icons";
-import { getReviewsBySiteId, type Site, type ReviewStatus } from "@/lib/mock-data";
+import type { Site, Review, ReviewStatus } from "@/lib/mock-data";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
 
 type StatusFilter = "all" | ReviewStatus;
@@ -14,13 +16,24 @@ type StarFilter = "all" | "5" | "4" | "3" | "2" | "1";
 type ThumbsFilter = "all" | "up" | "down";
 type NpsFilter = "all" | "promoters" | "passives" | "detractors";
 
+async function fetchReviews(siteId: string): Promise<Review[]> {
+  const response = await fetch(`/api/reviews?siteId=${encodeURIComponent(siteId)}`);
+  if (!response.ok) throw new Error("Failed to load reviews");
+  return response.json();
+}
+
 export function ReviewsTab({ site, dict }: { site: Site; dict: Dictionary }) {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [starFilter, setStarFilter] = useState<StarFilter>("all");
   const [thumbsFilter, setThumbsFilter] = useState<ThumbsFilter>("all");
   const [npsFilter, setNpsFilter] = useState<NpsFilter>("all");
 
-  const allReviews = useMemo(() => getReviewsBySiteId(site.id), [site.id]);
+  const { data, isPending } = useQuery({
+    queryKey: ["reviews", site.id],
+    queryFn: () => fetchReviews(site.id),
+  });
+
+  const allReviews = useMemo(() => data ?? [], [data]);
 
   const filteredReviews = useMemo(() => {
     return allReviews.filter((review) => {
@@ -121,7 +134,12 @@ export function ReviewsTab({ site, dict }: { site: Site; dict: Dictionary }) {
       </div>
 
       <div className="mt-4 space-y-4">
-        {allReviews.length === 0 ? (
+        {isPending ? (
+          <>
+            <ReviewCardSkeleton />
+            <ReviewCardSkeleton />
+          </>
+        ) : allReviews.length === 0 ? (
           <EmptyState
             icon={InboxIcon}
             title={dict.reviewsTab.noReviews}
@@ -141,7 +159,9 @@ export function ReviewsTab({ site, dict }: { site: Site; dict: Dictionary }) {
             }
           />
         ) : (
-          filteredReviews.map((review) => <ReviewCard key={review.id} review={review} />)
+          filteredReviews.map((review) => (
+            <ReviewCard key={review.id} review={review} moderatable />
+          ))
         )}
       </div>
     </div>

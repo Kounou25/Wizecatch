@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { GlobeIcon, ArrowRightIcon, ActivityIcon } from "@/components/icons";
+import { ArrowRightIcon, ActivityIcon } from "@/components/icons";
+import { SiteFavicon } from "@/components/dashboard/site-favicon";
 import { getSiteSummary, type Site } from "@/lib/mock-data";
 
 export function SiteCard({
@@ -20,9 +21,7 @@ export function SiteCard({
       <Card className="group p-5 transition-shadow duration-150 hover:shadow-md">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-zinc-100 text-zinc-500">
-              <GlobeIcon className="h-5 w-5" />
-            </span>
+            <SiteFavicon domain={site.domain} size="md" />
             <div>
               <div className="flex flex-wrap items-center gap-2">
                 <h3 className="font-semibold text-zinc-900">{site.name}</h3>

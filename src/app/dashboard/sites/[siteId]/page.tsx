@@ -13,6 +13,7 @@ import { ReviewsTab } from "@/components/dashboard/tabs/reviews-tab";
 import { TemplateSettingsTab } from "@/components/dashboard/tabs/template-settings-tab";
 import { WidgetSettingsTab } from "@/components/dashboard/tabs/widget-settings-tab";
 import { GlobeIcon } from "@/components/icons";
+import { SiteFavicon } from "@/components/dashboard/site-favicon";
 import { useSites } from "@/components/providers/sites-provider";
 import { useLanguage } from "@/components/providers/language-provider";
 
@@ -63,9 +64,7 @@ export default function SiteDetailPage() {
   return (
     <div>
       <div className="flex items-center gap-3">
-        <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-zinc-100 text-zinc-500">
-          <GlobeIcon className="h-6 w-6" />
-        </span>
+        <SiteFavicon domain={site.domain} size="lg" />
         <div>
           <div className="flex flex-wrap items-center gap-2">
             <h1 className="text-xl font-semibold tracking-tight text-zinc-900">{site.name}</h1>

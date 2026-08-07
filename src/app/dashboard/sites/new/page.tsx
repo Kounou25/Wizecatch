@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { ModeSelector, type ModeOption } from "@/components/dashboard/mode-selector";
 import { TemplateCard } from "@/components/dashboard/template-card";
 import { TemplatePreviewForm } from "@/components/dashboard/template-preview-form";
+import { SiteFavicon } from "@/components/dashboard/site-favicon";
 import { MessageSquareIcon, ActivityIcon, LoaderIcon } from "@/components/icons";
 import { useLanguage } from "@/components/providers/language-provider";
 import { cn, interpolate } from "@/lib/utils";
@@ -79,6 +80,18 @@ export default function NewSitePage() {
   const step1Valid = name.trim().length > 0 && domain.trim().length > 0;
   const isTemplateStep = step === 3 && mode === "reviews";
 
+  // N'affiche le favicon qu'une fois le domaine plausible, pour ne pas
+  // déclencher une requête à chaque caractère tapé.
+  const cleanedDomain = domain
+    .trim()
+    .toLowerCase()
+    .replace(/^https?:\/\//, "")
+    .replace(/^www\./, "")
+    .replace(/\/.*$/, "");
+  const previewDomain = /^[a-z0-9-]+(\.[a-z0-9-]+)+$/.test(cleanedDomain)
+    ? cleanedDomain
+    : null;
+
   return (
     <div className={cn("mx-auto transition-all duration-300", isTemplateStep ? "max-w-4xl" : "max-w-2xl")}>
       <Link
@@ -125,12 +138,16 @@ export default function NewSitePage() {
               </div>
               <div>
                 <Label htmlFor="domain">{dict.wizard.domain}</Label>
-                <Input
-                  id="domain"
-                  value={domain}
-                  onChange={(event) => setDomain(event.target.value)}
-                  placeholder={dict.wizard.domainPlaceholder}
-                />
+                <div className="flex items-center gap-3">
+                  <Input
+                    id="domain"
+                    value={domain}
+                    onChange={(event) => setDomain(event.target.value)}
+                    placeholder={dict.wizard.domainPlaceholder}
+                  />
+                  {/* Confirme visuellement que le domaine saisi est le bon. */}
+                  {previewDomain && <SiteFavicon domain={previewDomain} size="sm" />}
+                </div>
                 <p className="mt-1.5 text-xs text-zinc-400">{dict.wizard.domainHint}</p>
               </div>
             </div>

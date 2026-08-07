@@ -62,7 +62,10 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // Tout sauf les assets statiques, les images et le widget public.
-    "/((?!_next/static|_next/image|favicon.ico|w.js|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
+    // Exclut les assets statiques, le widget, sa page de test, et surtout les
+    // routes publiques de collecte : appelées par des visiteurs anonymes, elles
+    // n'ont pas de session à rafraîchir et un passage par le proxy leur
+    // coûterait un appel réseau à Supabase sur chaque événement.
+    "/((?!_next/static|_next/image|favicon.ico|w\\.js|test-widget\\.html|api/collect|api/submit|api/w/|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
   ],
 };

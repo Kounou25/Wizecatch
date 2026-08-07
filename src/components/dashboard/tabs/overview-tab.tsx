@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { CodeBlock } from "@/components/dashboard/code-block";
+import { SiteEmbedTabs } from "@/components/dashboard/site-embed-tabs";
 import { templateIcons } from "@/components/template-icon";
 import { ActivityIcon, ExternalLinkIcon } from "@/components/icons";
 import { getTemplateById, type Site } from "@/lib/mock-data";
@@ -15,7 +15,6 @@ export function OverviewTab({ site, dict }: { site: Site; dict: Dictionary }) {
   const siteKey = site.publicKey ?? site.id;
   const origin =
     process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ?? "https://app.wizecatch.com";
-  const snippet = `<script src="${origin}/w.js" data-site="${siteKey}" async></script>`;
 
   return (
     <div className="grid gap-6 lg:grid-cols-3">
@@ -60,13 +59,18 @@ export function OverviewTab({ site, dict }: { site: Site; dict: Dictionary }) {
         </a>
       </div>
 
-      <div className="lg:col-span-2">
+      <div className="space-y-4 lg:col-span-2">
         <Card className="p-5">
           <h2 className="text-sm font-semibold text-zinc-900">{dict.siteDetail.embedScript}</h2>
-          <p className="mt-1 text-sm text-zinc-500">{dict.siteDetail.embedScriptDesc}</p>
+          <p className="mt-1 text-sm text-zinc-500">
+            {isReviews ? dict.siteDetail.embedBothDesc : dict.siteDetail.embedScriptDesc}
+          </p>
           <div className="mt-4">
-            <CodeBlock code={snippet} />
+            <SiteEmbedTabs siteKey={siteKey} origin={origin} showWall={isReviews} />
           </div>
+          {isReviews && (
+            <p className="mt-3 text-xs text-zinc-400">{dict.siteDetail.wallHint}</p>
+          )}
         </Card>
       </div>
     </div>

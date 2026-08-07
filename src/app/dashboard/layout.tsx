@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { DashboardShell } from "@/components/dashboard/dashboard-shell";
 import { SitesProvider } from "@/components/providers/sites-provider";
 import { UserProvider } from "@/components/providers/user-provider";
+import { QueryProvider } from "@/components/providers/query-provider";
 import { getCurrentUser } from "@/lib/auth/current-user";
 import { getUserSites } from "@/lib/sites/queries";
 
@@ -19,10 +20,12 @@ export default async function DashboardLayout({
   const sites = await getUserSites();
 
   return (
-    <UserProvider user={user}>
-      <SitesProvider sites={sites}>
-        <DashboardShell>{children}</DashboardShell>
-      </SitesProvider>
-    </UserProvider>
+    <QueryProvider>
+      <UserProvider user={user}>
+        <SitesProvider sites={sites}>
+          <DashboardShell>{children}</DashboardShell>
+        </SitesProvider>
+      </UserProvider>
+    </QueryProvider>
   );
 }
