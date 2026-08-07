@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:testimonial.to)",
+      "Bash(ls -la \"C:/Users/kouno/.claude/projects/c--Users-kouno-Downloads-wizecatch/memory/\" 2>/dev/null)",
+      "Read(//c/Users/kouno/.claude/projects/c--Users-kouno-Downloads-wizecatch/**)",
+      "Bash(powershell -Command 'Get-Process | Where-Object {$_.ProcessName -match '\\\\''node|npm'\\\\''} | Select-Object ProcessName, Id, CPU, StartTime, WorkingSet')",
+      "Bash(npx tsc *)",
+      "Bash(npm run *)"
+    ]
+  }
+}
