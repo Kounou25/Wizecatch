@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Navbar } from "@/components/marketing/navbar";
 import { Footer } from "@/components/marketing/footer";
 import { WidgetMockup } from "@/components/marketing/widget-mockup";
@@ -19,6 +20,8 @@ import { ScrollProgressBar } from "@/components/scroll-progress-bar";
 import { Button } from "@/components/ui/button";
 import { StatsLineChart } from "@/components/dashboard/stats-line-chart";
 import { useLanguage } from "@/components/providers/language-provider";
+import { cn, interpolate } from "@/lib/utils";
+import { LifetimeOffer } from "@/components/marketing/lifetime-offer";
 import {
   GlobeIcon,
   CodeIcon,
@@ -28,6 +31,7 @@ import {
 } from "@/components/icons";
 import {
   pricingPlans,
+  lifetimeOffer,
   productTestimonials,
   integrations,
   faqs,
@@ -44,6 +48,7 @@ const previewTotalVisits = previewVisits.reduce((sum, point) => sum + point.valu
 
 export default function Home() {
   const { dict } = useLanguage();
+  const [yearly, setYearly] = useState(false);
 
   const steps = [
     { number: "01", icon: GlobeIcon, title: dict.howItWorks.step1Title, description: dict.howItWorks.step1Desc },
@@ -123,6 +128,52 @@ export default function Home() {
         </section>
 
         <TrustedByStrip label={dict.trustedBy.label} />
+
+        {/* Problème — nommer la frustration avant de proposer la solution */}
+        <section className="border-t border-zinc-100 py-24 sm:py-28">
+          <div className="mx-auto max-w-5xl px-6">
+            <Reveal className="mx-auto max-w-2xl text-center">
+              <h2 className="text-sm font-semibold uppercase tracking-wide text-zinc-400">
+                {dict.problem.eyebrow}
+              </h2>
+              <p className="mt-3 text-3xl font-semibold tracking-tight text-zinc-900">
+                {dict.problem.title}
+              </p>
+              <p className="mt-3 text-zinc-600">{dict.problem.subtitle}</p>
+            </Reveal>
+
+            <div className="mt-14 grid gap-5 sm:grid-cols-2">
+              {[
+                { title: dict.problem.p1Title, desc: dict.problem.p1Desc },
+                { title: dict.problem.p2Title, desc: dict.problem.p2Desc },
+                { title: dict.problem.p3Title, desc: dict.problem.p3Desc },
+                { title: dict.problem.p4Title, desc: dict.problem.p4Desc },
+              ].map((item, index) => (
+                <Reveal key={item.title} delay={index * 80}>
+                  <div className="h-full rounded-2xl border border-zinc-200 bg-zinc-50/60 p-6">
+                    <span className="text-xs font-semibold text-zinc-300">
+                      0{index + 1}
+                    </span>
+                    <h3 className="mt-2 font-semibold text-zinc-900">{item.title}</h3>
+                    <p className="mt-2 text-sm leading-relaxed text-zinc-600">
+                      {item.desc}
+                    </p>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+
+            {/* Bascule visuelle vers la solution */}
+            <Reveal delay={320} className="mt-12 flex justify-center">
+              <div className="flex flex-col items-center gap-3">
+                <span className="h-10 w-px bg-gradient-to-b from-zinc-200 to-purple-400" />
+                <span className="rounded-full bg-purple-50 px-4 py-1.5 text-sm font-medium text-purple-700 ring-1 ring-inset ring-purple-100">
+                  {dict.howItWorks.eyebrow}
+                </span>
+              </div>
+            </Reveal>
+          </div>
+        </section>
 
         {/* How it works */}
         <section id="how-it-works" className="border-t border-zinc-100 bg-zinc-50/60 py-24 sm:py-28">
@@ -285,15 +336,81 @@ export default function Home() {
                 {dict.pricing.title}
               </p>
               <p className="mt-3 text-zinc-600">{dict.pricing.subtitle}</p>
+
+              {/* Bascule mensuel / annuel — le badge « 2 mois offerts »
+                  fait le travail de conversion vers l'engagement annuel. */}
+              <div className="mt-8 inline-flex items-center gap-1 rounded-full bg-zinc-100 p-1">
+                <button
+                  type="button"
+                  onClick={() => setYearly(false)}
+                  className={cn(
+                    "rounded-full px-4 py-1.5 text-sm font-medium transition-all duration-150",
+                    !yearly ? "bg-white text-zinc-900 shadow-sm" : "text-zinc-500 hover:text-zinc-700",
+                  )}
+                >
+                  {dict.pricing.monthly}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setYearly(true)}
+                  className={cn(
+                    "flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium transition-all duration-150",
+                    yearly ? "bg-white text-zinc-900 shadow-sm" : "text-zinc-500 hover:text-zinc-700",
+                  )}
+                >
+                  {dict.pricing.yearly}
+                  <span className="rounded-full bg-purple-100 px-2 py-0.5 text-[11px] font-semibold text-purple-700">
+                    {dict.pricing.saveBadge}
+                  </span>
+                </button>
+              </div>
             </Reveal>
 
-            <div className="mx-auto mt-16 grid max-w-3xl gap-8 sm:grid-cols-2">
+            <div className="mt-12 grid gap-6 lg:grid-cols-3">
               {pricingPlans.map((plan, index) => (
-                <Reveal key={plan.id} delay={index * 100}>
-                  <PricingCard plan={plan} />
+                <Reveal key={plan.id} delay={index * 90}>
+                  <PricingCard
+                    plan={plan}
+                    yearly={yearly}
+                    limitsLabel={dict.pricing.limitsLabel}
+                    perMonth={dict.pricing.perMonth}
+                    billedYearly={dict.pricing.billedYearly}
+                    onceLabel={dict.pricing.once}
+                    soonLabel={dict.pricing.soon}
+                  />
                 </Reveal>
               ))}
             </div>
+
+            {/* L'offre à vie, hors grille : un paiement unique n'est pas
+                comparable à un abonnement, le mettre dans la grille pousserait
+                à diviser un prix par l'autre. */}
+            <Reveal delay={280} className="mt-6">
+              <LifetimeOffer
+                spotsLabel={interpolate(dict.pricing.spots, {
+                  count: lifetimeOffer.spots,
+                })}
+                onceLabel={dict.pricing.once}
+              />
+            </Reveal>
+
+            <Reveal delay={310} className="mx-auto mt-10 max-w-2xl">
+              <p className="rounded-xl bg-purple-50 px-5 py-4 text-center text-sm leading-relaxed text-purple-900 ring-1 ring-inset ring-purple-100">
+                {dict.pricing.noGating}
+              </p>
+            </Reveal>
+
+            {/* Réassurance juste sous les cartes, au moment de l'hésitation. */}
+            <Reveal delay={340} className="mt-8 flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
+              {[dict.pricing.reassure1, dict.pricing.reassure2, dict.pricing.reassure3].map(
+                (item) => (
+                  <span key={item} className="flex items-center gap-1.5 text-sm text-zinc-500">
+                    <CheckIcon className="h-4 w-4 text-purple-600" />
+                    {item}
+                  </span>
+                ),
+              )}
+            </Reveal>
           </div>
         </section>
 

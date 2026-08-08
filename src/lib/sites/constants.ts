@@ -9,9 +9,23 @@ import type { ReviewTemplateId } from "@/lib/mock-data";
  */
 
 /** Nombre de sites autorisés par plan (cohérent avec la grille tarifaire). */
-export const SITE_LIMITS: Record<"free" | "pro", number> = {
+/**
+ * Nombre de sites par palier — doit rester aligné avec `pricingPlans`.
+ * `pro` est conservé comme alias de `scale` pour les comptes déjà créés.
+ */
+/**
+ * Le nombre de sites n'est pas le vrai facteur de coût — les visites le sont,
+ * et elles sont déjà plafonnées par ailleurs. On peut donc être généreux ici
+ * sans risque : 3 sites à 10 000 visites au total coûtent exactement autant
+ * qu'un seul site à 10 000 visites.
+ */
+export const SITE_LIMITS: Record<string, number> = {
   free: 1,
-  pro: 10,
+  starter: 3,
+  lifetime: 5,
+  scale: 25,
+  // Alias conservé pour les comptes créés avant le renommage des offres.
+  pro: 25,
 };
 
 export const TEMPLATE_IDS: ReviewTemplateId[] = [

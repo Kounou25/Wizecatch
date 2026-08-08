@@ -62,14 +62,16 @@ export async function createSite(input: {
 
   // --- limite de plan ---
   const { data: profile } = await supabase.from("profiles").select("plan").single();
-  const plan = (profile?.plan as "free" | "pro") ?? "free";
+  const plan = (profile?.plan as string) ?? "free";
 
   const { count } = await supabase
     .from("sites")
     .select("id", { count: "exact", head: true })
     .is("archived_at", null);
 
-  const limit = SITE_LIMITS[plan];
+  // Repli sur la limite Free si le plan est inconnu : mieux vaut bloquer à
+  // tort que d'ouvrir les vannes sur une valeur mal orthographiée en base.
+  const limit = SITE_LIMITS[plan] ?? SITE_LIMITS.free;
   if ((count ?? 0) >= limit) {
     return {
       ok: false,

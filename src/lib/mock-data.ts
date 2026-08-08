@@ -368,7 +368,7 @@ export const reviews: Review[] = [
     authorInitial: "E",
     rating: 2,
     comment:
-      "Widget itself is solid, but I expected CSV export on the free tier. Had to upgrade sooner than planned.",
+      "Widget itself is solid. I hit the free review limit faster than expected and had to upgrade sooner than planned.",
     city: "Sydney",
     country: "AU",
     date: "2026-06-22",
@@ -1119,7 +1119,8 @@ export function getAggregateHourlyDistribution(siteIds: string[], days = 30) {
 }
 
 /** Free-plan review allowance, used by the sidebar usage meter. */
-export const FREE_PLAN_REVIEW_LIMIT = 50;
+/** Doit rester aligné avec la limite annoncée sur l'offre Free. */
+export const FREE_PLAN_REVIEW_LIMIT = 20;
 
 /** Daily reviews + a template-appropriate rolling score, generated for the Stats tab. */
 export function generateDailyMetrics(site: Site, days = 30): DailyMetric[] {
@@ -1183,51 +1184,148 @@ export function getAggregateDailyReviews(reviewSites: Site[], days = 30) {
 export type PricingPlan = {
   id: string;
   name: string;
-  price: string;
-  period: string;
+  /** À qui s'adresse ce palier — aide le visiteur à s'auto-sélectionner. */
+  tagline: string;
+  priceMonthly: number;
+  /** Facturé à l'année : deux mois offerts. */
+  priceYearly: number;
   description: string;
   features: string[];
+  /**
+   * Limites annoncées franchement.
+   *
+   * Les cacher ne fait que déplacer la déception au moment de l'usage. Les
+   * afficher lève l'hésitation (« qu'est-ce qui va me bloquer ? ») et rend
+   * le palier supérieur évident pour ceux qui sont concernés.
+   */
+  limits: string[];
+  /** Annoncé mais pas encore livré — affiché avec une pastille « Soon ». */
+  comingSoon?: string[];
+  /** Paiement unique : ni bascule mensuel/annuel, ni abonnement. */
+  oneTime?: boolean;
   cta: string;
   highlighted: boolean;
+  badge?: string;
 };
 
+/**
+ * Grille tarifaire.
+ *
+ * Logique économique du palier à vie :
+ *
+ * Wizecatch a un coût récurrent par client (écritures de sessions, stockage,
+ * lectures du widget). Un paiement unique n'est donc soutenable que si le
+ * coût du client est BORNÉ. D'où trois garde-fous :
+ *
+ *   - volume mensuel plafonné bas (25 000 visites)
+ *   - historique glissant sur 12 mois → le stockage atteint un palier au lieu
+ *     de croître indéfiniment ; c'est ce qui rend le calcul tenable sur 10 ans
+ *   - placé SOUS l'offre mensuelle en volume, pour que la croissance d'un
+ *     client le pousse vers Scale au lieu de le figer sur le paiement unique
+ */
 export const pricingPlans: PricingPlan[] = [
   {
     id: "free",
     name: "Free",
-    price: "$0",
-    period: "/month",
-    description: "For indie projects just getting started with reviews or analytics.",
+    tagline: "See if anyone's out there",
+    priceMonthly: 0,
+    priceYearly: 0,
+    description:
+      "Enough to answer one question: is my site getting visitors, and do they like it?",
     features: [
-      "1 site",
-      "Reviews or analytics-only mode",
-      "Up to 50 collected reviews",
-      "Widget with Wizecatch badge",
-      "30-day stats history",
+      "1 website",
+      "2,500 visits per month",
+      "Up to 20 reviews",
+      "Star rating & thumbs up/down",
+      "Visits and countries",
+      "30 days of history",
+    ],
+    limits: [
+      "Wizecatch badge on your widget",
+      "Your wall shows 3 reviews max",
+      "No devices, sources or pages",
       "Community support",
     ],
-    cta: "Start for free",
+    cta: "Start free",
     highlighted: false,
   },
   {
-    id: "pro",
-    name: "Pro",
-    price: "$29",
-    period: "/month",
-    description: "For products that rely on social proof and visitor insight to grow.",
+    id: "starter",
+    name: "Starter",
+    tagline: "Make it look like yours",
+    priceMonthly: 12,
+    priceYearly: 120,
+    description:
+      "Take our name off your widget, stop counting reviews, and unlock the full dashboard.",
     features: [
-      "Up to 10 sites",
-      "Unlimited collected reviews",
-      "Remove Wizecatch branding",
-      "All 5 review templates",
-      "Unlimited stats history",
-      "CSV export",
-      "Priority email support",
+      "3 websites",
+      "10,000 visits per month",
+      "Unlimited reviews",
+      "All 5 review formats",
+      "Full analytics dashboard",
+      "Remove the Wizecatch badge",
+      "12 months of history",
+      "Email support",
     ],
-    cta: "Start free trial",
+    comingSoon: ["Export your data to CSV"],
+    limits: [
+      "10,000 visits across all your sites",
+      "Anything past 12 months is dropped",
+    ],
+    cta: "Upgrade to Starter",
     highlighted: true,
+    badge: "Most popular",
+  },
+  {
+    id: "scale",
+    name: "Scale",
+    tagline: "For growth and agencies",
+    priceMonthly: 39,
+    priceYearly: 390,
+    description:
+      "When one site becomes ten, and you need history that never gets cut.",
+    features: [
+      "25 websites",
+      "500,000 visits per month",
+      "Everything in Starter",
+      "History that never expires",
+      "All sites in one combined dashboard",
+      "Priority support",
+    ],
+    comingSoon: ["Export your data to CSV"],
+    limits: ["Beyond 25 websites, talk to us"],
+    cta: "Upgrade to Scale",
+    highlighted: false,
   },
 ];
+
+/**
+ * Offre à vie — délibérément HORS de la grille.
+ *
+ * Un paiement unique n'est pas comparable à un abonnement : le laisser dans
+ * la grille pousse le visiteur à diviser un prix par l'autre, et l'abonnement
+ * perd à tous les coups.
+ *
+ * Le plafond de places est ce qui rend l'offre soutenable : Wizecatch a un
+ * coût récurrent par client, donc un engagement à vie non plafonné revient à
+ * vendre des pertes à l'infini. 150 places = engagement borné et connu.
+ */
+export const lifetimeOffer = {
+  name: "Founding Lifetime",
+  price: 199,
+  spots: 150,
+  tagline: "Pay once. Never again.",
+  description:
+    "For a site that's up and running and won't triple overnight. One payment, and it's yours for good — no renewal, no price increase, ever.",
+  features: [
+    "5 websites",
+    "25,000 visits per month",
+    "Everything in Starter",
+    "12 months of rolling history",
+    "Every future update included",
+  ],
+  cta: "Claim a founding spot",
+};
 
 // ---------------------------------------------------------------------------
 // Account
@@ -1269,9 +1367,10 @@ export const productTestimonials: ProductTestimonial[] = [
   {
     id: "pt2",
     authorName: "Jonas Weber",
-    authorRole: "Indie developer",
+    authorRole: "Online store owner",
     authorInitial: "J",
-    quote: "One script tag. No dashboard sprawl. Exactly what I wanted.",
+    quote:
+      "I don't code. I pasted one line into Shopify and it worked. That's genuinely all it was.",
     rating: 5,
   },
   {
@@ -1286,9 +1385,9 @@ export const productTestimonials: ProductTestimonial[] = [
   {
     id: "pt4",
     authorName: "Owen Clarke",
-    authorRole: "Freelance developer",
+    authorRole: "Marketing lead",
     authorInitial: "O",
-    quote: "The NPS template alone replaced a $40/mo tool I was using.",
+    quote: "Replaced two subscriptions with one. Nobody had to involve our dev team.",
     rating: 4,
   },
   {
@@ -1304,9 +1403,10 @@ export const productTestimonials: ProductTestimonial[] = [
   {
     id: "pt6",
     authorName: "Ethan Park",
-    authorRole: "Solo founder",
+    authorRole: "Yoga studio owner",
     authorInitial: "E",
-    quote: "Set up analytics-only on my landing page before I'd even decided if I wanted reviews. No regrets.",
+    quote:
+      "I just wanted to know if my new site was getting visits. Turns out it was — and now I collect reviews from it too.",
     rating: 4,
   },
   {
@@ -1321,9 +1421,10 @@ export const productTestimonials: ProductTestimonial[] = [
   {
     id: "pt8",
     authorName: "Hannah Kim",
-    authorRole: "Indie hacker",
+    authorRole: "Agency owner",
     authorInitial: "H",
-    quote: "Country breakdown on the free plan is honestly better than tools I've paid for.",
+    quote:
+      "We set it up on every client site now. They get their own reviews page without ever calling us.",
     rating: 5,
   },
   {
@@ -1383,9 +1484,9 @@ export const faqs: FaqEntry[] = [
       "We resolve country and city from the request at collection time and don't retain the raw IP address afterward. Visit stats are aggregated, not tied to an individual identity.",
   },
   {
-    question: "Can I export my reviews and stats?",
+    question: "What happens to my reviews if I stop paying?",
     answer:
-      "CSV export for reviews and stats is available on the Pro plan. Free plan data is fully yours too — just not bulk-exportable without upgrading.",
+      "Nothing is deleted. Your account drops back to the Free limits, so older history stops showing and the badge comes back — but every review you collected stays in your dashboard, and the ones you published stay live on your site.",
   },
   {
     question: "Do I need a backend or database to use Wizecatch?",

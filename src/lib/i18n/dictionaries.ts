@@ -45,79 +45,114 @@ const en = {
     subtitle: "Combined visitor data across all your sites.",
   },
   hero: {
-    badge: "Built for indie developers",
-    titlePart1: "Collect reviews or just track your visitors",
-    titleHighlight: "with one script",
+    badge: "No coding required",
+    titlePart1: "Know who visits.",
+    titleHighlight: "Show what they say.",
     subtitle:
-      "Wizecatch is the lightweight widget for developers. Collect ratings and testimonials, or silently track visits — you choose per site, no backend required.",
-    ctaPrimary: "Get started free",
+      "One line of code — copy, paste, done — gives you visitor analytics and a customer review widget. Nothing to build, nothing to maintain, no cookie banner to add.",
+    ctaPrimary: "Start free",
     ctaSecondary: "See how it works",
-    trust1: "No credit card required",
-    trust2: "Free plan available forever",
-    trust3: "Works with any stack",
+    trust1: "Free forever for your first site",
+    trust2: "No cookie banner required",
+    trust3: "Installs in under 2 minutes",
     liveLabel: "Live",
   },
+  problem: {
+    eyebrow: "Sound familiar?",
+    title: "You shipped it. Now you're flying blind.",
+    subtitle:
+      "Whether you write code or not, everyone with a website hits the same two walls after launch.",
+    p1Title: "Is anyone even out there?",
+    p1Desc:
+      "You put your site online last week. Traffic could be 12 people or 1,200 — you genuinely don't know. And the usual analytics tools mean adding a cookie banner, then watching visitors bounce off it, for numbers you'll look at twice.",
+    p2Title: "Your best reviews are stuck in your inbox",
+    p2Desc:
+      "Customers tell you they love it — by email, on WhatsApp, in person at the counter. None of it reaches the one place it would actually convince someone: your website.",
+    p3Title: "Building it yourself isn't realistic",
+    p3Desc:
+      "A form, a database, moderation, spam filtering. Either you lose a week to it, or you wait on a developer's quote and a two-month slot. Neither gets reviews on your site this month.",
+    p4Title: "Or you pay for two separate tools",
+    p4Desc:
+      "One for analytics, one for testimonials. Two dashboards, two subscriptions, two setups to figure out — and both of them slowing down the site you're trying to grow.",
+  },
   howItWorks: {
-    eyebrow: "How it works",
-    title: "From zero to insight in three steps",
+    eyebrow: "The fix",
+    title: "One script. Four minutes. Done.",
     step1Title: "Add your site",
     step1Desc:
-      "Enter your domain and choose a mode: collect reviews, or just track visits silently.",
-    step2Title: "Embed the script",
+      "Paste your domain and pick what you need: collect reviews, or measure traffic silently. You can switch later without touching the code.",
+    step2Title: "Copy one line into your site",
     step2Desc:
-      "Paste one line of code before your closing </body> tag. Works with any stack — static HTML, React, or a no-code builder.",
-    step3Title: "Collect & understand",
+      "We generate the exact snippet and show you where it goes — whether you're on Shopify, WordPress, Webflow, Squarespace, or a site someone built for you.",
+    step3Title: "Watch it fill up",
     step3Desc:
-      "Reviews and visit data flow into your dashboard automatically. The best reviews are highlighted, visits are broken down by country.",
+      "Visits appear within seconds. Reviews land in your dashboard, and nothing goes public until you approve it.",
   },
   templatesSection: {
-    eyebrow: "Review templates",
-    title: "Pick a template, or skip reviews entirely",
+    eyebrow: "Ask the right way",
+    title: "A long form is wrong for half your pages",
     subtitle:
-      "Every site gets one of five review formats — or none at all, if you only want visitor analytics.",
-    analyticsBadge: "No popup shown to visitors",
-    analyticsTitle: "Analytics only",
+      "Asking someone to write a paragraph right after checkout kills your response rate. Pick what fits the moment — one tap, one score, or a full quote.",
+    analyticsBadge: "Nothing shown to visitors",
+    analyticsTitle: "Or ask nothing at all",
     analyticsDesc:
-      "Skip reviews entirely. The script tracks visits — country, city, date — silently in the background, with zero UI shown to your visitors.",
+      "Not every site needs reviews. In analytics-only mode the script measures traffic in complete silence — no popup, no prompt, and the review interface is never even downloaded.",
     previewLabel: "Live preview",
     hint: "This is the real widget — click the fields to try it.",
   },
   statsPreview: {
-    eyebrow: "Stats, not just stars",
-    title: "Every site gets a real stats dashboard",
+    eyebrow: "Not just stars",
+    title: "Reviews tell you what. Analytics tell you why.",
     subtitle:
-      "Visits over time, country breakdown, and — in review mode — rating trends and distribution. All from one script.",
+      "A 3-star review means more when you can see it came from mobile users in Brazil who left after 8 seconds. Same script tag, same dashboard, no extra kilobyte.",
   },
   trustedBy: {
     label: "Powering sites like",
   },
   wallOfLove: {
     eyebrow: "Wall of love",
-    title: "What developers say about Wizecatch",
-    subtitle: "We use our own product to collect this, obviously.",
+    title: "What our users say about Wizecatch",
+    subtitle:
+      "Every quote below was collected with Wizecatch and published in one click. This wall is the product.",
   },
   integrations: {
-    eyebrow: "Integrations",
-    title: "Works with your stack",
+    eyebrow: "Works everywhere",
+    title: "If you can copy and paste, you're done",
     subtitle:
-      "One script tag, any platform — static HTML, a framework, or a no-code builder.",
+      "No plugin to install, no account to connect, no technical setup. It works the same on a store, a portfolio, or a site you built yourself.",
   },
   faq: {
     eyebrow: "FAQ",
-    title: "Questions developers actually ask",
+    title: "The questions you're already asking",
   },
   pricing: {
     eyebrow: "Pricing",
-    title: "Simple pricing that scales with you",
-    subtitle: "Start for free. Upgrade when your data starts doing the selling for you.",
+    title: "Free until it actually matters",
+    subtitle:
+      "Your first site is free forever — not a trial. Upgrade the day your reviews start closing deals for you.",
+    monthly: "Monthly",
+    yearly: "Yearly",
+    saveBadge: "2 months free",
+    perMonth: "/month",
+    billedYearly: "billed yearly",
+    limitsLabel: "Limits",
+    reassure1: "No credit card to start",
+    reassure2: "Cancel in one click",
+    reassure3: "Your data stays yours",
+    noGating:
+      "Every paid plan includes all 5 review formats, every display layout and the full analytics dashboard. We charge for volume — never for features.",
+    once: "once",
+    soon: "Soon",
+    spots: "Limited to {count} spots",
   },
   finalCta: {
-    title: "Start collecting data today",
-    subtitle: "Free forever for your first site. No credit card, no backend to manage.",
-    cta: "Get started free",
+    title: "Stop guessing. Start showing.",
+    subtitle:
+      "Two minutes to install. Free forever for your first site. No credit card, no cookie banner, no backend to babysit.",
+    cta: "Start free",
   },
   footer: {
-    tagline: "Collect reviews or just track your visitors — with one script.",
+    tagline: "Know who visits. Show what they say. One script.",
     rights: "All rights reserved.",
   },
   auth: {
@@ -335,79 +370,114 @@ const fr: Dictionary = {
     subtitle: "Données de visite combinées sur tous vos sites.",
   },
   hero: {
-    badge: "Conçu pour les développeurs indie",
-    titlePart1: "Collectez des avis ou suivez simplement vos visiteurs",
-    titleHighlight: "avec un seul script",
+    badge: "Aucune compétence technique requise",
+    titlePart1: "Sachez qui vous visite.",
+    titleHighlight: "Montrez ce qu'ils en disent.",
     subtitle:
-      "Wizecatch est le widget léger pour développeurs. Collectez notes et témoignages, ou suivez les visites en silence — vous choisissez par site, sans backend.",
+      "Une ligne de code — copier, coller, c'est fait — vous donne vos statistiques de visite et un widget d'avis clients. Rien à construire, rien à maintenir, aucun bandeau cookies à ajouter.",
     ctaPrimary: "Commencer gratuitement",
     ctaSecondary: "Voir comment ça marche",
-    trust1: "Aucune carte bancaire requise",
-    trust2: "Offre gratuite disponible à vie",
-    trust3: "Compatible avec toutes les stacks",
+    trust1: "Gratuit à vie pour votre premier site",
+    trust2: "Aucun bandeau cookies nécessaire",
+    trust3: "Installé en moins de 2 minutes",
     liveLabel: "En direct",
   },
+  problem: {
+    eyebrow: "Ça vous parle ?",
+    title: "Vous avez livré. Et maintenant vous naviguez à l'aveugle.",
+    subtitle:
+      "Que vous codiez ou non, toute personne qui a un site se heurte aux deux mêmes murs après la mise en ligne.",
+    p1Title: "Est-ce qu'il y a seulement quelqu'un ?",
+    p1Desc:
+      "Vous avez mis votre site en ligne la semaine dernière. Le trafic, c'est peut-être 12 personnes, peut-être 1 200 — vous n'en savez honnêtement rien. Et les outils habituels imposent un bandeau cookies, qui fait fuir vos visiteurs, pour des chiffres que vous regarderez deux fois.",
+    p2Title: "Vos meilleurs avis dorment dans votre boîte mail",
+    p2Desc:
+      "Vos clients vous disent qu'ils adorent — par email, sur WhatsApp, de vive voix au comptoir. Rien de tout ça n'arrive au seul endroit qui convaincrait vraiment quelqu'un : votre site.",
+    p3Title: "Le faire vous-même n'est pas réaliste",
+    p3Desc:
+      "Un formulaire, une base de données, la modération, le filtrage du spam. Soit vous y perdez une semaine, soit vous attendez le devis d'un développeur et un créneau dans deux mois. Dans les deux cas, vos avis ne seront pas en ligne ce mois-ci.",
+    p4Title: "Ou vous payez deux outils séparés",
+    p4Desc:
+      "Un pour les statistiques, un pour les témoignages. Deux tableaux de bord, deux abonnements, deux installations à comprendre — et tous les deux ralentissent le site que vous essayez de faire décoller.",
+  },
   howItWorks: {
-    eyebrow: "Fonctionnement",
-    title: "De zéro à la donnée en trois étapes",
+    eyebrow: "La solution",
+    title: "Un script. Quatre minutes. C'est tout.",
     step1Title: "Ajoutez votre site",
     step1Desc:
-      "Entrez votre domaine et choisissez un mode : collecter des avis, ou juste suivre les visites en silence.",
-    step2Title: "Intégrez le script",
+      "Renseignez votre domaine et choisissez ce dont vous avez besoin : collecter des avis, ou mesurer le trafic en silence. Vous pourrez changer d'avis sans toucher au code.",
+    step2Title: "Copiez une ligne dans votre site",
     step2Desc:
-      "Collez une ligne de code avant votre balise </body>. Compatible avec toute stack — HTML statique, React, ou un builder no-code.",
-    step3Title: "Collectez & comprenez",
+      "Nous générons le code exact et vous montrons où le coller — que vous soyez sur Shopify, WordPress, Webflow, Squarespace, ou un site créé pour vous.",
+    step3Title: "Regardez ça se remplir",
     step3Desc:
-      "Avis et données de visite arrivent automatiquement dans votre dashboard. Les meilleurs avis sont mis en avant, les visites réparties par pays.",
+      "Les visites apparaissent en quelques secondes. Les avis arrivent dans votre tableau de bord, et rien n'est publié tant que vous ne l'avez pas validé.",
   },
   templatesSection: {
-    eyebrow: "Modèles d'avis",
-    title: "Choisissez un modèle, ou passez les avis",
+    eyebrow: "Demandez de la bonne façon",
+    title: "Un formulaire long est inadapté à la moitié de vos pages",
     subtitle:
-      "Chaque site utilise l'un des cinq formats d'avis — ou aucun, si vous voulez uniquement des statistiques de visite.",
-    analyticsBadge: "Aucun popup affiché aux visiteurs",
-    analyticsTitle: "Analytics uniquement",
+      "Demander à quelqu'un d'écrire un paragraphe juste après son achat tue votre taux de réponse. Choisissez ce qui colle au moment — un clic, une note, ou une citation complète.",
+    analyticsBadge: "Rien d'affiché aux visiteurs",
+    analyticsTitle: "Ou ne demandez rien du tout",
     analyticsDesc:
-      "Passez complètement les avis. Le script suit les visites — pays, ville, date — en silence, sans aucune interface visible pour vos visiteurs.",
+      "Tous les sites n'ont pas besoin d'avis. En mode analytics uniquement, le script mesure le trafic en silence total — aucun popup, aucune sollicitation, et le code d'interface n'est même jamais téléchargé.",
     previewLabel: "Aperçu en direct",
     hint: "C'est le vrai widget — cliquez dans les champs pour l'essayer.",
   },
   statsPreview: {
-    eyebrow: "Des stats, pas que des étoiles",
-    title: "Chaque site a un vrai tableau de statistiques",
+    eyebrow: "Pas que des étoiles",
+    title: "Les avis disent quoi. Les stats disent pourquoi.",
     subtitle:
-      "Évolution des visites, répartition par pays, et — en mode avis — tendances et répartition des notes. Tout ça avec un seul script.",
+      "Un avis 3 étoiles prend un tout autre sens quand vous voyez qu'il vient de visiteurs mobiles au Brésil, partis au bout de 8 secondes. Même balise script, même tableau de bord, pas un kilo-octet de plus.",
   },
   trustedBy: {
     label: "Utilisé sur des sites comme",
   },
   wallOfLove: {
     eyebrow: "Mur d'amour",
-    title: "Ce que les développeurs disent de Wizecatch",
-    subtitle: "On utilise notre propre produit pour collecter ça, forcément.",
+    title: "Ce que nos utilisateurs disent de Wizecatch",
+    subtitle:
+      "Chaque citation ci-dessous a été collectée avec Wizecatch et publiée en un clic. Ce mur, c'est le produit.",
   },
   integrations: {
-    eyebrow: "Intégrations",
-    title: "Compatible avec votre stack",
+    eyebrow: "Partout",
+    title: "Si vous savez copier-coller, c'est déjà fini",
     subtitle:
-      "Une seule balise script, sur n'importe quelle plateforme — HTML statique, un framework, ou un builder no-code.",
+      "Aucun plugin à installer, aucun compte à connecter, aucune configuration technique. Ça marche pareil sur une boutique, un portfolio, ou un site que vous avez créé vous-même.",
   },
   faq: {
     eyebrow: "FAQ",
-    title: "Les questions que se posent les développeurs",
+    title: "Les questions que vous vous posez déjà",
   },
   pricing: {
     eyebrow: "Tarifs",
-    title: "Une tarification simple qui grandit avec vous",
-    subtitle: "Commencez gratuitement. Passez à l'offre supérieure quand vos données parlent d'elles-mêmes.",
+    title: "Gratuit tant que ça ne compte pas vraiment",
+    subtitle:
+      "Votre premier site est gratuit à vie — ce n'est pas un essai. Passez à Pro le jour où vos avis commencent à conclure des ventes à votre place.",
+    monthly: "Mensuel",
+    yearly: "Annuel",
+    saveBadge: "2 mois offerts",
+    perMonth: "/mois",
+    billedYearly: "facturés à l'année",
+    limitsLabel: "Limites",
+    reassure1: "Sans carte bancaire pour commencer",
+    reassure2: "Résiliation en un clic",
+    reassure3: "Vos données restent les vôtres",
+    noGating:
+      "Toutes les offres payantes incluent les 5 formats d'avis, toutes les mises en page et le tableau de bord complet. Nous facturons le volume — jamais les fonctionnalités.",
+    once: "une fois",
+    soon: "Bientôt",
+    spots: "Limité à {count} places",
   },
   finalCta: {
-    title: "Commencez à collecter des données dès aujourd'hui",
-    subtitle: "Gratuit à vie pour votre premier site. Sans carte bancaire, sans backend à gérer.",
+    title: "Arrêtez de deviner. Commencez à montrer.",
+    subtitle:
+      "Deux minutes pour l'installer. Gratuit à vie pour votre premier site. Sans carte bancaire, sans bandeau cookies, sans backend à surveiller.",
     cta: "Commencer gratuitement",
   },
   footer: {
-    tagline: "Collectez des avis ou suivez simplement vos visiteurs — avec un seul script.",
+    tagline: "Sachez qui vous visite. Montrez ce qu'ils en disent. Un seul script.",
     rights: "Tous droits réservés.",
   },
   auth: {
