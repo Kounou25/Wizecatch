@@ -8,11 +8,13 @@ import { Label } from "@/components/ui/label";
 import { CheckIcon, ActivityIcon, LoaderIcon } from "@/components/icons";
 import { WallPreview } from "@/components/dashboard/wall-preview";
 import { updateSiteWidget } from "@/lib/sites/actions";
+import {
+  getWidgetPositions,
+  getWidgetTriggers,
+  getWidgetFormats,
+} from "@/lib/i18n/content";
 import { cn } from "@/lib/utils";
 import {
-  widgetPositions,
-  widgetTriggers,
-  widgetFormats,
   type Site,
   type WidgetPosition,
   type WidgetTrigger,
@@ -93,7 +95,7 @@ export function WidgetSettingsTab({ site, dict }: { site: Site; dict: Dictionary
               value={position}
               onChange={(event) => setPosition(event.target.value as WidgetPosition)}
             >
-              {widgetPositions.map((option) => (
+              {getWidgetPositions(dict).map((option) => (
                 <option key={option.value} value={option.value}>
                   {option.label}
                 </option>
@@ -108,7 +110,7 @@ export function WidgetSettingsTab({ site, dict }: { site: Site; dict: Dictionary
               value={trigger}
               onChange={(event) => setTrigger(event.target.value as WidgetTrigger)}
             >
-              {widgetTriggers.map((option) => (
+              {getWidgetTriggers(dict).map((option) => (
                 <option key={option.value} value={option.value}>
                   {option.label}
                 </option>
@@ -128,7 +130,7 @@ export function WidgetSettingsTab({ site, dict }: { site: Site; dict: Dictionary
 
           <div className="mt-4 grid gap-5 lg:grid-cols-2">
             <div className="space-y-2">
-              {widgetFormats.map((option) => (
+              {getWidgetFormats(dict).map((option) => (
                 <button
                   key={option.value}
                   type="button"

@@ -3,12 +3,13 @@ import { Badge } from "@/components/ui/badge";
 import { SiteEmbedTabs } from "@/components/dashboard/site-embed-tabs";
 import { templateIcons } from "@/components/template-icon";
 import { ActivityIcon, ExternalLinkIcon } from "@/components/icons";
-import { getTemplateById, type Site } from "@/lib/mock-data";
+import { type Site } from "@/lib/mock-data";
+import { getTemplate } from "@/lib/i18n/content";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
 
 export function OverviewTab({ site, dict }: { site: Site; dict: Dictionary }) {
   const isReviews = site.mode === "reviews";
-  const template = site.templateId ? getTemplateById(site.templateId) : null;
+  const template = site.templateId ? getTemplate(dict, site.templateId) : null;
   const TemplateIcon = site.templateId ? templateIcons[site.templateId] : null;
   // La clé publique, jamais l'uuid interne. Les sites de démonstration de la
   // page d'accueil n'en ont pas — on retombe alors sur un identifiant lisible.

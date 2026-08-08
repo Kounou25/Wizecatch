@@ -15,7 +15,8 @@ import { MessageSquareIcon, ActivityIcon, LoaderIcon } from "@/components/icons"
 import { useLanguage } from "@/components/providers/language-provider";
 import { cn, interpolate } from "@/lib/utils";
 import { createSite } from "@/lib/sites/actions";
-import { reviewTemplates, type SiteMode, type ReviewTemplateId } from "@/lib/mock-data";
+import { getReviewTemplates } from "@/lib/i18n/content";
+import { type SiteMode, type ReviewTemplateId } from "@/lib/mock-data";
 
 export default function NewSitePage() {
   const router = useRouter();
@@ -172,7 +173,7 @@ export default function NewSitePage() {
 
             <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_300px]">
               <div className="grid gap-3 sm:grid-cols-2">
-                {reviewTemplates.map((template) => (
+                {getReviewTemplates(dict).map((template) => (
                   <TemplateCard
                     key={template.id}
                     template={template}

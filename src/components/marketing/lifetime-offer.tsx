@@ -9,9 +9,17 @@ import { lifetimeOffer } from "@/lib/mock-data";
  * exceptionnelle et limitée, pas comme un quatrième palier permanent.
  */
 export function LifetimeOffer({
+  content,
   spotsLabel,
   onceLabel,
 }: {
+  content: {
+    name: string;
+    tagline: string;
+    description: string;
+    features: string[];
+    cta: string;
+  };
   spotsLabel: string;
   onceLabel: string;
 }) {
@@ -25,21 +33,19 @@ export function LifetimeOffer({
       <div className="relative grid gap-8 lg:grid-cols-[1fr_auto] lg:items-center">
         <div>
           <div className="flex flex-wrap items-center gap-3">
-            <h3 className="text-xl font-semibold text-white">{lifetimeOffer.name}</h3>
+            <h3 className="text-xl font-semibold text-white">{content.name}</h3>
             <span className="animate-pulse-ring rounded-full bg-purple-500/20 px-3 py-1 text-xs font-semibold text-purple-300">
               {spotsLabel}
             </span>
           </div>
 
-          <p className="mt-1 text-sm font-medium text-purple-300">
-            {lifetimeOffer.tagline}
-          </p>
+          <p className="mt-1 text-sm font-medium text-purple-300">{content.tagline}</p>
           <p className="mt-3 max-w-xl text-sm leading-relaxed text-zinc-400">
-            {lifetimeOffer.description}
+            {content.description}
           </p>
 
           <ul className="mt-6 grid gap-2.5 sm:grid-cols-2">
-            {lifetimeOffer.features.map((feature) => (
+            {content.features.map((feature) => (
               <li key={feature} className="flex items-start gap-2.5 text-sm">
                 <CheckIcon className="mt-0.5 h-4 w-4 shrink-0 text-purple-400" />
                 <span className="text-zinc-300">{feature}</span>
@@ -57,7 +63,7 @@ export function LifetimeOffer({
           </div>
 
           <Button href="/signup" size="lg" className="w-full whitespace-nowrap lg:w-auto">
-            {lifetimeOffer.cta}
+            {content.cta}
           </Button>
         </div>
       </div>

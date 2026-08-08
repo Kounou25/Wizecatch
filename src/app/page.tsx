@@ -21,6 +21,7 @@ import { Button } from "@/components/ui/button";
 import { StatsLineChart } from "@/components/dashboard/stats-line-chart";
 import { useLanguage } from "@/components/providers/language-provider";
 import { cn, interpolate } from "@/lib/utils";
+import { getFaqs, getTestimonials } from "@/lib/i18n/content";
 import { LifetimeOffer } from "@/components/marketing/lifetime-offer";
 import {
   GlobeIcon,
@@ -32,9 +33,7 @@ import {
 import {
   pricingPlans,
   lifetimeOffer,
-  productTestimonials,
   integrations,
-  faqs,
   getDailyVisitCounts,
   getCountryBreakdown,
 } from "@/lib/mock-data";
@@ -249,7 +248,7 @@ export default function Home() {
             </Reveal>
 
             <div className="mt-16">
-              <WallOfLove testimonials={productTestimonials} />
+              <WallOfLove testimonials={getTestimonials(dict)} />
             </div>
           </div>
         </section>
@@ -371,12 +370,15 @@ export default function Home() {
                 <Reveal key={plan.id} delay={index * 90}>
                   <PricingCard
                     plan={plan}
+                    content={dict.pricing.plans[plan.id]}
                     yearly={yearly}
-                    limitsLabel={dict.pricing.limitsLabel}
-                    perMonth={dict.pricing.perMonth}
-                    billedYearly={dict.pricing.billedYearly}
-                    onceLabel={dict.pricing.once}
-                    soonLabel={dict.pricing.soon}
+                    labels={{
+                      limits: dict.pricing.limitsLabel,
+                      perMonth: dict.pricing.perMonth,
+                      billedYearly: dict.pricing.billedYearly,
+                      soon: dict.pricing.soon,
+                      mostPopular: dict.pricing.mostPopular,
+                    }}
                   />
                 </Reveal>
               ))}
@@ -387,6 +389,7 @@ export default function Home() {
                 à diviser un prix par l'autre. */}
             <Reveal delay={280} className="mt-6">
               <LifetimeOffer
+                content={dict.pricing.lifetimeCard}
                 spotsLabel={interpolate(dict.pricing.spots, {
                   count: lifetimeOffer.spots,
                 })}
@@ -394,14 +397,8 @@ export default function Home() {
               />
             </Reveal>
 
-            <Reveal delay={310} className="mx-auto mt-10 max-w-2xl">
-              <p className="rounded-xl bg-purple-50 px-5 py-4 text-center text-sm leading-relaxed text-purple-900 ring-1 ring-inset ring-purple-100">
-                {dict.pricing.noGating}
-              </p>
-            </Reveal>
-
             {/* Réassurance juste sous les cartes, au moment de l'hésitation. */}
-            <Reveal delay={340} className="mt-8 flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
+            <Reveal delay={310} className="mt-10 flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
               {[dict.pricing.reassure1, dict.pricing.reassure2, dict.pricing.reassure3].map(
                 (item) => (
                   <span key={item} className="flex items-center gap-1.5 text-sm text-zinc-500">
@@ -427,7 +424,7 @@ export default function Home() {
             </Reveal>
 
             <Reveal delay={150} className="mt-12">
-              <FaqAccordion items={faqs} />
+              <FaqAccordion items={getFaqs(dict)} />
             </Reveal>
           </div>
         </section>

@@ -6,18 +6,13 @@ import { NPSDisplay } from "@/components/nps-display";
 import { MapPinIcon, QuoteIcon } from "@/components/icons";
 import { ReviewModeration } from "@/components/dashboard/review-moderation";
 import { countryName } from "@/lib/geo/countries";
+import { useLanguage } from "@/components/providers/language-provider";
 import type { Review, ReviewStatus } from "@/lib/mock-data";
 
 const statusVariant: Record<ReviewStatus, "green" | "yellow" | "neutral"> = {
   published: "green",
   pending: "yellow",
   hidden: "neutral",
-};
-
-const statusLabel: Record<ReviewStatus, string> = {
-  published: "Published",
-  pending: "Pending",
-  hidden: "Hidden",
 };
 
 function formatDate(date: string) {
@@ -69,6 +64,7 @@ export function ReviewCard({
   /** Affiche les actions de modération (désactivé pour les données de démo). */
   moderatable?: boolean;
 }) {
+  const { dict } = useLanguage();
   const isTestimonial = review.templateId === "testimonial";
 
   return (
@@ -92,7 +88,7 @@ export function ReviewCard({
 
         <div className="flex flex-col items-end gap-2">
           <RatingIndicator review={review} />
-          <Badge variant={statusVariant[review.status]}>{statusLabel[review.status]}</Badge>
+          <Badge variant={statusVariant[review.status]}>{dict.reviewStatus[review.status]}</Badge>
         </div>
       </div>
 

@@ -139,11 +139,87 @@ const en = {
     reassure1: "No credit card to start",
     reassure2: "Cancel in one click",
     reassure3: "Your data stays yours",
-    noGating:
-      "Every paid plan includes all 5 review formats, every display layout and the full analytics dashboard. We charge for volume — never for features.",
     once: "once",
     soon: "Soon",
     spots: "Limited to {count} spots",
+    mostPopular: "Most popular",
+    plans: {
+      free: {
+        name: "Free",
+        tagline: "See if anyone's out there",
+        description:
+          "Enough to answer one question: is my site getting visitors, and do they like it?",
+        features: [
+          "1 website",
+          "2,500 visits per month",
+          "Up to 20 reviews",
+          "Star rating & thumbs up/down",
+          "Visits and countries",
+          "30 days of history",
+        ],
+        limits: [
+          "Wizecatch badge on your widget",
+          "Your wall shows 3 reviews max",
+          "No devices, sources or pages",
+          "Community support",
+        ],
+        comingSoon: [] as string[],
+        cta: "Start free",
+      },
+      starter: {
+        name: "Starter",
+        tagline: "Make it look like yours",
+        description:
+          "Take our name off your widget, stop counting reviews, and unlock the full dashboard.",
+        features: [
+          "3 websites",
+          "10,000 visits per month",
+          "Unlimited reviews",
+          "All 5 review formats",
+          "Full analytics dashboard",
+          "Remove the Wizecatch badge",
+          "12 months of history",
+          "Email support",
+        ],
+        limits: [
+          "10,000 visits across all your sites",
+          "Anything past 12 months is dropped",
+        ],
+        comingSoon: ["Export your data to CSV"],
+        cta: "Upgrade to Starter",
+      },
+      scale: {
+        name: "Scale",
+        tagline: "For growth and agencies",
+        description:
+          "When one site becomes ten, and you need history that never gets cut.",
+        features: [
+          "25 websites",
+          "500,000 visits per month",
+          "Everything in Starter",
+          "History that never expires",
+          "All sites in one combined dashboard",
+          "Priority support",
+        ],
+        limits: ["Beyond 25 websites, talk to us"],
+        comingSoon: ["Export your data to CSV"],
+        cta: "Upgrade to Scale",
+      },
+    },
+    lifetimeCard: {
+      name: "Founding Lifetime",
+      tagline: "Pay once. Never again.",
+      description:
+        "For a site that's up and running and won't triple overnight. One payment, and it's yours for good — no renewal, no price increase, ever.",
+      features: [
+        "5 websites",
+        "25,000 visits per month",
+        "Everything in Starter",
+        "12 months of rolling history",
+        "Every future update included",
+      ],
+      cta: "Claim a founding spot",
+    },
   },
   finalCta: {
     title: "Stop guessing. Start showing.",
@@ -322,6 +398,160 @@ const en = {
     copy: "Copy",
     copied: "Copied",
   },
+
+  /** Les 5 formats d'avis, indexés par identifiant. */
+  templates: {
+    star_rating: {
+      name: "Star Rating",
+      description:
+        "A simple 1–5 star rating. Fastest way for visitors to leave feedback.",
+    },
+    star_comment: {
+      name: "Star Rating + Comment",
+      description:
+        "Star rating paired with an optional written comment for more context.",
+    },
+    thumbs: {
+      name: "Thumbs Up / Down",
+      description: "A single-tap like or dislike — the lowest-friction option available.",
+    },
+    nps: {
+      name: "NPS Score",
+      description: "0–10 likelihood-to-recommend score with an optional comment.",
+    },
+    testimonial: {
+      name: "Testimonial",
+      description: "Open-ended name and text testimonial, no rating attached.",
+    },
+  },
+
+  widgetOptions: {
+    positions: {
+      "bottom-right": "Bottom right",
+      "bottom-left": "Bottom left",
+      "top-right": "Top right",
+      "top-left": "Top left",
+      inline: "Inline (embedded in page)",
+    },
+    triggers: {
+      load: "On page load",
+      scroll: "On scroll into view",
+      delay: "After a 5s delay",
+    },
+    formats: {
+      carousel: "Carousel",
+      grid: "Grid",
+      list: "List",
+      popup: "Popup card",
+    },
+  },
+
+  reviewStatus: {
+    published: "Published",
+    pending: "Pending",
+    hidden: "Hidden",
+  },
+
+  states: {
+    noVisits: "No visits yet",
+    noVisitsDesc:
+      "Once the script is live on your site, visits will appear here within seconds.",
+    noVisitsNoSite: "Add a site and embed the script to start collecting data.",
+    statsError: "Could not load statistics",
+    statsErrorDesc:
+      "Something went wrong while fetching your data. Try reloading the page.",
+    requireComment: "Require a comment",
+    requireCommentDesc: "Visitors must write something before submitting.",
+    showLocation: "Show reviewer location",
+    showLocationDesc: "Display city and country next to published reviews.",
+    anonymous: "Anonymous",
+  },
+
+  faqItems: [
+    {
+      question: "Will Wizecatch slow down my site?",
+      answer:
+        "No. The script is a few kilobytes, loads asynchronously, and never blocks rendering. In analytics-only mode there's no visible UI at all, so there's nothing to paint.",
+    },
+    {
+      question: "Can I use it with a no-code builder like Webflow or Framer?",
+      answer:
+        "Yes. Since it's a single script tag, it works anywhere you can paste custom HTML — Webflow, Framer, Squarespace, Shopify, Carrd and plain HTML pages all work the same way.",
+    },
+    {
+      question: "What happens when I hit the review limit on the Free plan?",
+      answer:
+        "Your widget keeps working and continues showing your existing reviews. New submissions are queued until you upgrade, so you never lose a review — you just won't see new ones publish until then.",
+    },
+    {
+      question: "Can I switch a site from Analytics-only to Reviews mode later?",
+      answer:
+        "Yes, at any time from the site's settings. Your visit history stays intact either way — switching modes only changes whether a review form is shown to visitors going forward.",
+    },
+    {
+      question: "Do you store visitor IP addresses?",
+      answer:
+        "We resolve country and city from the request at collection time and don't retain the raw IP address afterward. Visit stats are aggregated, not tied to an individual identity — which is why you don't need a cookie banner.",
+    },
+    {
+      question: "What happens to my reviews if I stop paying?",
+      answer:
+        "Nothing is deleted. Your account drops back to the Free limits, so older history stops showing and the badge comes back — but every review you collected stays in your dashboard, and the ones you published stay live on your site.",
+    },
+    {
+      question: "Do I need a backend or a database to use Wizecatch?",
+      answer:
+        "No. Wizecatch runs entirely as a hosted service — you paste the script, we handle collection, storage and the dashboard. Nothing to deploy or maintain on your side.",
+    },
+  ],
+
+  /** Rôles et citations du mur d'avis, indexés par identifiant. */
+  testimonials: {
+    pt1: {
+      role: "Founder, Launchbase",
+      quote:
+        "I've tried three review widgets before this one. Wizecatch is the first that didn't touch my page speed. Embedded it in under five minutes and never thought about it again.",
+    },
+    pt2: {
+      role: "Online store owner",
+      quote:
+        "I don't code. I pasted one line into Shopify and it worked. That's genuinely all it was.",
+    },
+    pt3: {
+      role: "Co-founder, Formly",
+      quote:
+        "Switching one of our sites to analytics-only mode took thirty seconds and didn't require touching a single line of the embed code — same script, different behavior.",
+    },
+    pt4: {
+      role: "Marketing lead",
+      quote: "Replaced two subscriptions with one. Nobody had to involve our dev team.",
+    },
+    pt5: {
+      role: "Product designer",
+      quote:
+        "Finally a widget that looks like it belongs on my site instead of screaming 'third-party embed'. The carousel matches our brand almost perfectly out of the box.",
+    },
+    pt6: {
+      role: "Yoga studio owner",
+      quote:
+        "I just wanted to know if my new site was getting visits. Turns out it was — and now I collect reviews from it too.",
+    },
+    pt7: {
+      role: "CTO, Devnotes",
+      quote:
+        "We collect NPS scores after every release now. Detractors route straight to our support inbox, promoters become testimonials. It's the workflow we always meant to build ourselves.",
+    },
+    pt8: {
+      role: "Agency owner",
+      quote:
+        "We set it up on every client site now. They get their own reviews page without ever calling us.",
+    },
+    pt9: {
+      role: "Founder, Pixeldeck",
+      quote:
+        "No rating pressure with the testimonial format — just honest quotes from real customers.",
+    },
+  },
 };
 
 export type Dictionary = typeof en;
@@ -464,11 +694,87 @@ const fr: Dictionary = {
     reassure1: "Sans carte bancaire pour commencer",
     reassure2: "Résiliation en un clic",
     reassure3: "Vos données restent les vôtres",
-    noGating:
-      "Toutes les offres payantes incluent les 5 formats d'avis, toutes les mises en page et le tableau de bord complet. Nous facturons le volume — jamais les fonctionnalités.",
     once: "une fois",
     soon: "Bientôt",
     spots: "Limité à {count} places",
+    mostPopular: "Le plus choisi",
+    plans: {
+      free: {
+        name: "Gratuit",
+        tagline: "Voyez s'il y a du monde",
+        description:
+          "De quoi répondre à une seule question : mon site reçoit-il des visiteurs, et est-ce qu'ils apprécient ?",
+        features: [
+          "1 site",
+          "2 500 visites par mois",
+          "Jusqu'à 20 avis",
+          "Note en étoiles & pouce haut/bas",
+          "Visites et pays",
+          "30 jours d'historique",
+        ],
+        limits: [
+          "Badge Wizecatch sur votre widget",
+          "Votre mur affiche 3 avis maximum",
+          "Ni appareils, ni sources, ni pages",
+          "Support communautaire",
+        ],
+        comingSoon: [] as string[],
+        cta: "Commencer gratuitement",
+      },
+      starter: {
+        name: "Starter",
+        tagline: "Faites-le vôtre",
+        description:
+          "Retirez notre nom de votre widget, arrêtez de compter vos avis, et débloquez le tableau de bord complet.",
+        features: [
+          "3 sites",
+          "10 000 visites par mois",
+          "Avis illimités",
+          "Les 5 formats d'avis",
+          "Tableau de bord complet",
+          "Badge Wizecatch retiré",
+          "12 mois d'historique",
+          "Support par email",
+        ],
+        limits: [
+          "10 000 visites tous sites confondus",
+          "Au-delà de 12 mois, les données sont effacées",
+        ],
+        comingSoon: ["Export de vos données en CSV"],
+        cta: "Passer à Starter",
+      },
+      scale: {
+        name: "Scale",
+        tagline: "Pour la croissance et les agences",
+        description:
+          "Quand un site devient dix, et qu'il vous faut un historique qui ne se coupe jamais.",
+        features: [
+          "25 sites",
+          "500 000 visites par mois",
+          "Tout Starter",
+          "Historique conservé indéfiniment",
+          "Tous vos sites dans un tableau de bord unique",
+          "Support prioritaire",
+        ],
+        limits: ["Au-delà de 25 sites, parlons-en"],
+        comingSoon: ["Export de vos données en CSV"],
+        cta: "Passer à Scale",
+      },
+    },
+    lifetimeCard: {
+      name: "Offre Fondateur à vie",
+      tagline: "Payez une fois. Plus jamais.",
+      description:
+        "Pour un site déjà lancé et dont le trafic ne va pas tripler du jour au lendemain. Un seul paiement, et c'est à vous pour de bon — sans renouvellement, sans hausse de prix, jamais.",
+      features: [
+        "5 sites",
+        "25 000 visites par mois",
+        "Tout Starter",
+        "12 mois d'historique glissant",
+        "Toutes les mises à jour futures incluses",
+      ],
+      cta: "Réserver une place fondateur",
+    },
   },
   finalCta: {
     title: "Arrêtez de deviner. Commencez à montrer.",
@@ -648,6 +954,161 @@ const fr: Dictionary = {
     saved: "Enregistré",
     copy: "Copier",
     copied: "Copié",
+  },
+
+  templates: {
+    star_rating: {
+      name: "Note en étoiles",
+      description:
+        "Une simple note de 1 à 5 étoiles. Le moyen le plus rapide de recueillir un avis.",
+    },
+    star_comment: {
+      name: "Étoiles + commentaire",
+      description:
+        "La note en étoiles accompagnée d'un commentaire facultatif, pour plus de contexte.",
+    },
+    thumbs: {
+      name: "Pouce haut / bas",
+      description: "Un seul clic, j'aime ou je n'aime pas — l'option la moins contraignante.",
+    },
+    nps: {
+      name: "Score NPS",
+      description:
+        "Note de 0 à 10 sur la probabilité de recommander, avec commentaire facultatif.",
+    },
+    testimonial: {
+      name: "Témoignage",
+      description: "Nom et texte libre, sans note associée.",
+    },
+  },
+
+  widgetOptions: {
+    positions: {
+      "bottom-right": "En bas à droite",
+      "bottom-left": "En bas à gauche",
+      "top-right": "En haut à droite",
+      "top-left": "En haut à gauche",
+      inline: "Intégré dans la page",
+    },
+    triggers: {
+      load: "Au chargement de la page",
+      scroll: "Au défilement",
+      delay: "Après 5 secondes",
+    },
+    formats: {
+      carousel: "Carrousel",
+      grid: "Grille",
+      list: "Liste",
+      popup: "Carte flottante",
+    },
+  },
+
+  reviewStatus: {
+    published: "Publié",
+    pending: "En attente",
+    hidden: "Masqué",
+  },
+
+  states: {
+    noVisits: "Aucune visite pour l'instant",
+    noVisitsDesc:
+      "Dès que le script sera en ligne sur votre site, les visites apparaîtront ici en quelques secondes.",
+    noVisitsNoSite:
+      "Ajoutez un site et intégrez le script pour commencer à collecter des données.",
+    statsError: "Impossible de charger les statistiques",
+    statsErrorDesc:
+      "Une erreur est survenue pendant la récupération des données. Essayez de recharger la page.",
+    requireComment: "Exiger un commentaire",
+    requireCommentDesc: "Les visiteurs devront écrire quelque chose avant de valider.",
+    showLocation: "Afficher la localisation",
+    showLocationDesc: "Montrer la ville et le pays à côté des avis publiés.",
+    anonymous: "Anonyme",
+  },
+
+  faqItems: [
+    {
+      question: "Est-ce que Wizecatch va ralentir mon site ?",
+      answer:
+        "Non. Le script fait quelques kilo-octets, se charge de façon asynchrone et ne bloque jamais l'affichage. En mode analytics uniquement, il n'y a aucune interface visible — donc rien à dessiner.",
+    },
+    {
+      question: "Puis-je l'utiliser avec un outil no-code comme Webflow ou Framer ?",
+      answer:
+        "Oui. Comme il s'agit d'une simple balise script, ça fonctionne partout où vous pouvez coller du HTML — Webflow, Framer, Squarespace, Shopify, Carrd et les pages HTML classiques, de la même façon.",
+    },
+    {
+      question: "Que se passe-t-il quand j'atteins la limite d'avis de l'offre gratuite ?",
+      answer:
+        "Votre widget continue de fonctionner et d'afficher vos avis existants. Les nouveaux sont mis en file d'attente jusqu'à votre passage à une offre payante : vous ne perdez aucun avis, vous ne verrez simplement pas les nouveaux se publier d'ici là.",
+    },
+    {
+      question: "Puis-je passer un site du mode Analytics au mode Avis plus tard ?",
+      answer:
+        "Oui, à tout moment depuis les paramètres du site. Votre historique de visites reste intact dans les deux cas — changer de mode modifie seulement l'affichage ou non d'un formulaire d'avis aux visiteurs.",
+    },
+    {
+      question: "Est-ce que vous stockez les adresses IP des visiteurs ?",
+      answer:
+        "Nous déduisons le pays et la ville au moment de la collecte, puis nous ne conservons pas l'adresse IP. Les statistiques sont agrégées et jamais rattachées à une identité — c'est précisément pour cela que vous n'avez pas besoin de bandeau cookies.",
+    },
+    {
+      question: "Qu'arrive-t-il à mes avis si j'arrête de payer ?",
+      answer:
+        "Rien n'est supprimé. Votre compte revient aux limites de l'offre gratuite : l'historique ancien cesse de s'afficher et le badge réapparaît — mais tous les avis collectés restent dans votre tableau de bord, et ceux que vous aviez publiés restent en ligne sur votre site.",
+    },
+    {
+      question: "Ai-je besoin d'un serveur ou d'une base de données ?",
+      answer:
+        "Non. Wizecatch fonctionne entièrement comme un service hébergé — vous collez le script, nous gérons la collecte, le stockage et le tableau de bord. Rien à déployer ni à maintenir de votre côté.",
+    },
+  ],
+
+  testimonials: {
+    pt1: {
+      role: "Fondateur, Launchbase",
+      quote:
+        "J'ai essayé trois widgets d'avis avant celui-ci. Wizecatch est le premier à ne pas avoir dégradé la vitesse de ma page. Intégré en moins de cinq minutes, et je n'y ai plus jamais repensé.",
+    },
+    pt2: {
+      role: "Propriétaire de boutique en ligne",
+      quote:
+        "Je ne code pas. J'ai collé une ligne dans Shopify et ça a marché. C'est vraiment tout ce que j'ai eu à faire.",
+    },
+    pt3: {
+      role: "Co-fondatrice, Formly",
+      quote:
+        "Basculer un de nos sites en mode analytics uniquement a pris trente secondes, sans toucher une seule ligne du code d'intégration — même script, comportement différent.",
+    },
+    pt4: {
+      role: "Responsable marketing",
+      quote:
+        "Deux abonnements remplacés par un seul. Personne n'a eu besoin de solliciter l'équipe technique.",
+    },
+    pt5: {
+      role: "Designer produit",
+      quote:
+        "Enfin un widget qui a l'air d'appartenir à mon site au lieu de crier « intégration tierce ». Le carrousel colle presque parfaitement à notre charte, sans réglage.",
+    },
+    pt6: {
+      role: "Propriétaire de studio de yoga",
+      quote:
+        "Je voulais juste savoir si mon nouveau site recevait des visites. Il en recevait — et maintenant j'y collecte aussi des avis.",
+    },
+    pt7: {
+      role: "Directeur technique, Devnotes",
+      quote:
+        "On collecte un score NPS après chaque mise en production. Les détracteurs partent directement vers notre support, les promoteurs deviennent des témoignages. C'est le fonctionnement qu'on voulait construire nous-mêmes.",
+    },
+    pt8: {
+      role: "Dirigeant d'agence",
+      quote:
+        "On l'installe sur tous les sites clients désormais. Ils ont leur propre page d'avis sans jamais avoir à nous appeler.",
+    },
+    pt9: {
+      role: "Fondatrice, Pixeldeck",
+      quote:
+        "Aucune pression de notation avec le format témoignage — juste des citations sincères de vrais clients.",
+    },
   },
 };
 

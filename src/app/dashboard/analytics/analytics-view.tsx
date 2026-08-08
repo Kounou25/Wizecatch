@@ -62,11 +62,9 @@ export function AnalyticsView({
         <div className="mt-8">
           <EmptyState
             icon={ActivityIcon}
-            title="No visits yet"
+            title={dict.states.noVisits}
             description={
-              siteCount === 0
-                ? "Add a site and embed the script to start collecting data."
-                : "Embed the script on your site — visits will appear here within seconds."
+              siteCount === 0 ? dict.states.noVisitsNoSite : dict.states.noVisitsDesc
             }
           />
         </div>

@@ -4,35 +4,43 @@ import { CheckIcon, XIcon } from "@/components/icons";
 import { cn } from "@/lib/utils";
 import type { PricingPlan } from "@/lib/mock-data";
 
+/** Textes traduits d'un palier — viennent des dictionnaires, pas des données. */
+export type PlanContent = {
+  name: string;
+  tagline: string;
+  description: string;
+  features: string[];
+  limits: string[];
+  comingSoon: string[];
+  cta: string;
+};
+
 export function PricingCard({
   plan,
+  content,
   yearly,
-  limitsLabel,
-  perMonth,
-  billedYearly,
-  onceLabel,
-  soonLabel,
+  labels,
 }: {
   plan: PricingPlan;
+  content: PlanContent;
   yearly: boolean;
-  limitsLabel: string;
-  perMonth: string;
-  billedYearly: string;
-  onceLabel: string;
-  soonLabel: string;
+  labels: {
+    limits: string;
+    perMonth: string;
+    billedYearly: string;
+    soon: string;
+    mostPopular: string;
+  };
 }) {
   const isFree = plan.priceMonthly === 0;
-  const isOneTime = plan.oneTime === true;
 
   // Sur l'offre annuelle on affiche le coût mensuel équivalent : comparer
-  // « 22 $/mois » à « 27 $/mois » est immédiat, « 270 $/an » ne l'est pas.
-  // Le paiement unique échappe à cette bascule : son prix ne varie jamais.
-  const displayed =
-    isOneTime || isFree
-      ? plan.priceMonthly
-      : yearly
-        ? Math.round(plan.priceYearly / 12)
-        : plan.priceMonthly;
+  // « 10 $/mois » à « 12 $/mois » est immédiat, « 120 $/an » ne l'est pas.
+  const displayed = isFree
+    ? 0
+    : yearly
+      ? Math.round(plan.priceYearly / 12)
+      : plan.priceMonthly;
 
   return (
     <Spotlight
@@ -44,10 +52,10 @@ export function PricingCard({
       )}
     >
       <div className="flex items-center justify-between gap-2">
-        <h3 className="text-lg font-semibold">{plan.name}</h3>
-        {plan.badge && (
+        <h3 className="text-lg font-semibold">{content.name}</h3>
+        {plan.highlighted && (
           <span className="animate-pulse-ring rounded-full bg-purple-500/20 px-2.5 py-0.5 text-xs font-medium text-purple-300">
-            {plan.badge}
+            {labels.mostPopular}
           </span>
         )}
       </div>
@@ -58,13 +66,13 @@ export function PricingCard({
           plan.highlighted ? "text-purple-300" : "text-purple-600",
         )}
       >
-        {plan.tagline}
+        {content.tagline}
       </p>
 
       <div className="mt-5 flex items-baseline gap-1">
         <span className="text-4xl font-semibold tracking-tight">${displayed}</span>
         <span className={cn("text-sm", plan.highlighted ? "text-zinc-400" : "text-zinc-500")}>
-          {isOneTime ? onceLabel : perMonth}
+          {labels.perMonth}
         </span>
       </div>
 
@@ -76,15 +84,16 @@ export function PricingCard({
           plan.highlighted ? "text-zinc-500" : "text-zinc-400",
         )}
       >
-        {isOneTime
-          ? ""
-          : yearly && !isFree
-            ? `$${plan.priceYearly} ${billedYearly}`
-            : ""}
+        {yearly && !isFree ? `$${plan.priceYearly} ${labels.billedYearly}` : ""}
       </p>
 
-      <p className={cn("mt-4 text-sm leading-relaxed", plan.highlighted ? "text-zinc-400" : "text-zinc-500")}>
-        {plan.description}
+      <p
+        className={cn(
+          "mt-4 text-sm leading-relaxed",
+          plan.highlighted ? "text-zinc-400" : "text-zinc-500",
+        )}
+      >
+        {content.description}
       </p>
 
       <Button
@@ -93,11 +102,11 @@ export function PricingCard({
         size="lg"
         className={cn("mt-6 w-full", !plan.highlighted && "bg-white")}
       >
-        {plan.cta}
+        {content.cta}
       </Button>
 
       <ul className="mt-7 space-y-2.5">
-        {plan.features.map((feature) => (
+        {content.features.map((feature) => (
           <li key={feature} className="flex items-start gap-2.5 text-sm">
             <CheckIcon
               className={cn(
@@ -113,7 +122,7 @@ export function PricingCard({
 
         {/* Annoncé mais pas encore livré : la pastille évite de laisser croire
             que c'est disponible aujourd'hui. */}
-        {plan.comingSoon?.map((feature) => (
+        {content.comingSoon.map((feature) => (
           <li key={feature} className="flex items-start gap-2.5 text-sm">
             <CheckIcon
               className={cn(
@@ -121,17 +130,20 @@ export function PricingCard({
                 plan.highlighted ? "text-zinc-600" : "text-zinc-300",
               )}
             />
-            <span className={cn("flex flex-wrap items-center gap-1.5", plan.highlighted ? "text-zinc-500" : "text-zinc-400")}>
+            <span
+              className={cn(
+                "flex flex-wrap items-center gap-1.5",
+                plan.highlighted ? "text-zinc-500" : "text-zinc-400",
+              )}
+            >
               {feature}
               <span
                 className={cn(
                   "rounded-full px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide",
-                  plan.highlighted
-                    ? "bg-zinc-800 text-zinc-400"
-                    : "bg-zinc-100 text-zinc-500",
+                  plan.highlighted ? "bg-zinc-800 text-zinc-400" : "bg-zinc-100 text-zinc-500",
                 )}
               >
-                {soonLabel}
+                {labels.soon}
               </span>
             </span>
           </li>
@@ -152,10 +164,10 @@ export function PricingCard({
             plan.highlighted ? "text-zinc-500" : "text-zinc-400",
           )}
         >
-          {limitsLabel}
+          {labels.limits}
         </p>
         <ul className="mt-2.5 space-y-2">
-          {plan.limits.map((limit) => (
+          {content.limits.map((limit) => (
             <li key={limit} className="flex items-start gap-2.5 text-sm">
               <XIcon
                 className={cn(

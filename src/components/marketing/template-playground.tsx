@@ -6,7 +6,9 @@ import { templateIcons } from "@/components/template-icon";
 import { Badge } from "@/components/ui/badge";
 import { ActivityIcon, CheckIcon } from "@/components/icons";
 import { cn } from "@/lib/utils";
-import { reviewTemplates, type ReviewTemplateId } from "@/lib/mock-data";
+import { type ReviewTemplateId } from "@/lib/mock-data";
+import { getReviewTemplates } from "@/lib/i18n/content";
+import { useLanguage } from "@/components/providers/language-provider";
 
 type Selection = ReviewTemplateId | "analytics_only";
 
@@ -23,6 +25,7 @@ export function TemplatePlayground({
   previewLabel: string;
   hint: string;
 }) {
+  const { dict } = useLanguage();
   const [selected, setSelected] = useState<Selection>("star_comment");
 
   const options: {
@@ -31,7 +34,7 @@ export function TemplatePlayground({
     description: string;
     icon: React.ComponentType<{ className?: string }>;
   }[] = [
-    ...reviewTemplates.map((template) => ({
+    ...getReviewTemplates(dict).map((template) => ({
       id: template.id as Selection,
       name: template.name,
       description: template.description,

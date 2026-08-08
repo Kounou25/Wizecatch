@@ -1182,121 +1182,25 @@ export function getAggregateDailyReviews(reviewSites: Site[], days = 30) {
 // ---------------------------------------------------------------------------
 
 export type PricingPlan = {
-  id: string;
-  name: string;
-  /** À qui s'adresse ce palier — aide le visiteur à s'auto-sélectionner. */
-  tagline: string;
+  /** Clé de correspondance avec les textes traduits (dict.pricing.plans). */
+  id: "free" | "starter" | "scale";
   priceMonthly: number;
   /** Facturé à l'année : deux mois offerts. */
   priceYearly: number;
-  description: string;
-  features: string[];
-  /**
-   * Limites annoncées franchement.
-   *
-   * Les cacher ne fait que déplacer la déception au moment de l'usage. Les
-   * afficher lève l'hésitation (« qu'est-ce qui va me bloquer ? ») et rend
-   * le palier supérieur évident pour ceux qui sont concernés.
-   */
-  limits: string[];
-  /** Annoncé mais pas encore livré — affiché avec une pastille « Soon ». */
-  comingSoon?: string[];
-  /** Paiement unique : ni bascule mensuel/annuel, ni abonnement. */
-  oneTime?: boolean;
-  cta: string;
   highlighted: boolean;
-  badge?: string;
 };
 
 /**
- * Grille tarifaire.
+ * Grille tarifaire — chiffres uniquement.
  *
- * Logique économique du palier à vie :
- *
- * Wizecatch a un coût récurrent par client (écritures de sessions, stockage,
- * lectures du widget). Un paiement unique n'est donc soutenable que si le
- * coût du client est BORNÉ. D'où trois garde-fous :
- *
- *   - volume mensuel plafonné bas (25 000 visites)
- *   - historique glissant sur 12 mois → le stockage atteint un palier au lieu
- *     de croître indéfiniment ; c'est ce qui rend le calcul tenable sur 10 ans
- *   - placé SOUS l'offre mensuelle en volume, pour que la croissance d'un
- *     client le pousse vers Scale au lieu de le figer sur le paiement unique
+ * Tous les libellés (noms, descriptions, fonctionnalités, limites) vivent dans
+ * les dictionnaires i18n : une grille de prix non traduite est un frein direct
+ * à la conversion sur un marché non anglophone.
  */
 export const pricingPlans: PricingPlan[] = [
-  {
-    id: "free",
-    name: "Free",
-    tagline: "See if anyone's out there",
-    priceMonthly: 0,
-    priceYearly: 0,
-    description:
-      "Enough to answer one question: is my site getting visitors, and do they like it?",
-    features: [
-      "1 website",
-      "2,500 visits per month",
-      "Up to 20 reviews",
-      "Star rating & thumbs up/down",
-      "Visits and countries",
-      "30 days of history",
-    ],
-    limits: [
-      "Wizecatch badge on your widget",
-      "Your wall shows 3 reviews max",
-      "No devices, sources or pages",
-      "Community support",
-    ],
-    cta: "Start free",
-    highlighted: false,
-  },
-  {
-    id: "starter",
-    name: "Starter",
-    tagline: "Make it look like yours",
-    priceMonthly: 12,
-    priceYearly: 120,
-    description:
-      "Take our name off your widget, stop counting reviews, and unlock the full dashboard.",
-    features: [
-      "3 websites",
-      "10,000 visits per month",
-      "Unlimited reviews",
-      "All 5 review formats",
-      "Full analytics dashboard",
-      "Remove the Wizecatch badge",
-      "12 months of history",
-      "Email support",
-    ],
-    comingSoon: ["Export your data to CSV"],
-    limits: [
-      "10,000 visits across all your sites",
-      "Anything past 12 months is dropped",
-    ],
-    cta: "Upgrade to Starter",
-    highlighted: true,
-    badge: "Most popular",
-  },
-  {
-    id: "scale",
-    name: "Scale",
-    tagline: "For growth and agencies",
-    priceMonthly: 39,
-    priceYearly: 390,
-    description:
-      "When one site becomes ten, and you need history that never gets cut.",
-    features: [
-      "25 websites",
-      "500,000 visits per month",
-      "Everything in Starter",
-      "History that never expires",
-      "All sites in one combined dashboard",
-      "Priority support",
-    ],
-    comingSoon: ["Export your data to CSV"],
-    limits: ["Beyond 25 websites, talk to us"],
-    cta: "Upgrade to Scale",
-    highlighted: false,
-  },
+  { id: "free", priceMonthly: 0, priceYearly: 0, highlighted: false },
+  { id: "starter", priceMonthly: 12, priceYearly: 120, highlighted: true },
+  { id: "scale", priceMonthly: 39, priceYearly: 390, highlighted: false },
 ];
 
 /**
@@ -1308,23 +1212,11 @@ export const pricingPlans: PricingPlan[] = [
  *
  * Le plafond de places est ce qui rend l'offre soutenable : Wizecatch a un
  * coût récurrent par client, donc un engagement à vie non plafonné revient à
- * vendre des pertes à l'infini. 150 places = engagement borné et connu.
+ * vendre des pertes à l'infini.
  */
 export const lifetimeOffer = {
-  name: "Founding Lifetime",
   price: 199,
   spots: 150,
-  tagline: "Pay once. Never again.",
-  description:
-    "For a site that's up and running and won't triple overnight. One payment, and it's yours for good — no renewal, no price increase, ever.",
-  features: [
-    "5 websites",
-    "25,000 visits per month",
-    "Everything in Starter",
-    "12 months of rolling history",
-    "Every future update included",
-  ],
-  cta: "Claim a founding spot",
 };
 
 // ---------------------------------------------------------------------------

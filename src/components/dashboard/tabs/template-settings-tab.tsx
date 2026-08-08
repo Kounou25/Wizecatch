@@ -11,9 +11,8 @@ import { TemplatePreviewForm } from "@/components/dashboard/template-preview-for
 import { templateIcons } from "@/components/template-icon";
 import { CheckIcon, LoaderIcon } from "@/components/icons";
 import { updateSiteTemplate } from "@/lib/sites/actions";
+import { getReviewTemplates, getTemplate } from "@/lib/i18n/content";
 import {
-  getTemplateById,
-  reviewTemplates,
   defaultTemplateCustomization,
   type Site,
   type ReviewTemplateId,
@@ -38,7 +37,7 @@ export function TemplateSettingsTab({ site, dict }: { site: Site; dict: Dictiona
 
   if (!templateId || !defaults) return null;
 
-  const template = getTemplateById(templateId);
+  const template = getTemplate(dict, templateId);
   const Icon = templateIcons[templateId];
 
   function handleSelectTemplate(id: ReviewTemplateId) {
@@ -113,7 +112,7 @@ export function TemplateSettingsTab({ site, dict }: { site: Site; dict: Dictiona
 
           {galleryOpen && (
             <div className="mt-4 grid gap-3 border-t border-zinc-100 pt-4 sm:grid-cols-2">
-              {reviewTemplates.map((t) => (
+              {getReviewTemplates(dict).map((t) => (
                 <TemplateCard
                   key={t.id}
                   template={t}
@@ -180,14 +179,14 @@ export function TemplateSettingsTab({ site, dict }: { site: Site; dict: Dictiona
             <Toggle
               checked={requireComment}
               onChange={setRequireComment}
-              label="Require a comment"
-              description="Visitors must write something before submitting."
+              label={dict.states.requireComment}
+              description={dict.states.requireCommentDesc}
             />
             <Toggle
               checked={showLocation}
               onChange={setShowLocation}
-              label="Show reviewer location"
-              description="Display city and country next to published reviews."
+              label={dict.states.showLocation}
+              description={dict.states.showLocationDesc}
             />
           </div>
         </Card>

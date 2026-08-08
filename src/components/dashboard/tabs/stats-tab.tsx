@@ -45,8 +45,8 @@ export function StatsTab({ site, dict }: { site: Site; dict: Dictionary }) {
     return (
       <EmptyState
         icon={BarChartIcon}
-        title="Could not load statistics"
-        description="Something went wrong while fetching your data. Try reloading the page."
+        title={dict.states.statsError}
+        description={dict.states.statsErrorDesc}
       />
     );
   }
@@ -94,8 +94,8 @@ export function StatsTab({ site, dict }: { site: Site; dict: Dictionary }) {
       {!isPending && !hasData ? (
         <EmptyState
           icon={ActivityIcon}
-          title="No visits yet"
-          description="Once the script is live on your site, visits will appear here within seconds."
+          title={dict.states.noVisits}
+          description={dict.states.noVisitsDesc}
         />
       ) : (
         <>
