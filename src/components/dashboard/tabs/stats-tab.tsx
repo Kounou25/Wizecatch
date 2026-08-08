@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { StatCard } from "@/components/dashboard/stat-card";
 import { StatsLineChart } from "@/components/dashboard/stats-line-chart";
+import { BreakdownList } from "@/components/dashboard/breakdown-list";
 import { RatingBreakdownChart } from "@/components/dashboard/rating-breakdown-chart";
 import { CountryBreakdown } from "@/components/dashboard/country-breakdown";
 import { WorldMap } from "@/components/dashboard/world-map";
@@ -29,6 +30,17 @@ async function fetchStats(siteId: string): Promise<SiteStats> {
 
 function ChartSkeleton() {
   return <Skeleton className="h-56 w-full" />;
+}
+
+/** Le squelette doit annoncer la forme réelle : trois lignes, pas un bloc. */
+function ListSkeleton() {
+  return (
+    <div className="space-y-1">
+      <Skeleton className="h-9 w-full" />
+      <Skeleton className="h-9 w-3/5" />
+      <Skeleton className="h-9 w-2/5" />
+    </div>
+  );
 }
 
 export function StatsTab({ site, dict }: { site: Site; dict: Dictionary }) {
@@ -165,23 +177,23 @@ export function StatsTab({ site, dict }: { site: Site; dict: Dictionary }) {
             <Card className="p-5">
               <h3 className="text-sm font-semibold text-zinc-900">{dict.stats.device}</h3>
               <div className="mt-4">
-                {isPending ? <ChartSkeleton /> : <RatingBreakdownChart data={data!.devices} />}
+                {isPending ? <ListSkeleton /> : <BreakdownList data={data!.devices} iconSet="device" emptyLabel={dict.stats.noData} />}
               </div>
             </Card>
             <Card className="p-5">
               <h3 className="text-sm font-semibold text-zinc-900">{dict.stats.os}</h3>
               <div className="mt-4">
                 {isPending ? (
-                  <ChartSkeleton />
+                  <ListSkeleton />
                 ) : (
-                  <RatingBreakdownChart data={data!.operatingSystems} iconSet="os" />
+                  <BreakdownList data={data!.operatingSystems} iconSet="os" emptyLabel={dict.stats.noData} />
                 )}
               </div>
             </Card>
             <Card className="p-5">
               <h3 className="text-sm font-semibold text-zinc-900">{dict.stats.browser}</h3>
               <div className="mt-4">
-                {isPending ? <ChartSkeleton /> : <RatingBreakdownChart data={data!.browsers} iconSet="browser" />}
+                {isPending ? <ListSkeleton /> : <BreakdownList data={data!.browsers} iconSet="browser" emptyLabel={dict.stats.noData} />}
               </div>
             </Card>
           </div>

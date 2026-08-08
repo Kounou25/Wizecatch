@@ -327,6 +327,7 @@ const en = {
     notFoundDesc: "We couldn't find a site with that ID. It may have been removed.",
   },
   stats: {
+    noData: "No data yet",
     visitsOverTime: "Visits over the last 30 days",
     scoreOverTime: "Score trend over the last 30 days",
     ratingBreakdown: "Rating breakdown",
@@ -890,6 +891,7 @@ const fr: Dictionary = {
     notFoundDesc: "Impossible de trouver un site avec cet identifiant. Il a peut-être été supprimé.",
   },
   stats: {
+    noData: "Aucune donnée",
     visitsOverTime: "Visites sur les 30 derniers jours",
     scoreOverTime: "Tendance du score sur les 30 derniers jours",
     ratingBreakdown: "Répartition des notes",

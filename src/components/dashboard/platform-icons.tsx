@@ -1,4 +1,4 @@
-import type { OperatingSystem, Browser } from "@/lib/mock-data";
+import type { OperatingSystem, Browser, DeviceType } from "@/lib/mock-data";
 import {
   siApple,
   siAndroid,
@@ -53,9 +53,35 @@ export const browserIcons: Record<Browser, PlatformIcon> = {
   Edge: EDGE,
 };
 
-export type IconSet = "os" | "browser";
+/**
+ * Les appareils ne sont pas des marques : glyphes neutres, dans le gris du
+ * texte, pour ne pas concurrencer visuellement les logos colorés d'à côté.
+ */
+const DEVICE_COLOR = "#71717a";
+
+export const deviceIcons: Record<DeviceType, PlatformIcon> = {
+  Desktop: {
+    path: "M3 4h18a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1h-7v2h3a1 1 0 1 1 0 2H7a1 1 0 1 1 0-2h3v-2H3a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1Zm1 2v8h16V6H4Z",
+    color: DEVICE_COLOR,
+  },
+  Mobile: {
+    path: "M7 2h10a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Zm0 2v16h10V4H7Zm3 15h4a.75.75 0 0 1 0 1.5h-4a.75.75 0 0 1 0-1.5Z",
+    color: DEVICE_COLOR,
+  },
+  Tablet: {
+    path: "M5 2h14a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Zm0 2v16h14V4H5Zm5.5 15h3a.75.75 0 0 1 0 1.5h-3a.75.75 0 0 1 0-1.5Z",
+    color: DEVICE_COLOR,
+  },
+};
+
+export type IconSet = "os" | "browser" | "device";
+
+const TABLES: Record<IconSet, Record<string, PlatformIcon>> = {
+  os: osIcons,
+  browser: browserIcons,
+  device: deviceIcons,
+};
 
 export function platformIcon(set: IconSet, label: string): PlatformIcon | null {
-  const table: Record<string, PlatformIcon> = set === "os" ? osIcons : browserIcons;
-  return table[label] ?? null;
+  return TABLES[set][label] ?? null;
 }

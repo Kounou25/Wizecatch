@@ -3,6 +3,7 @@
 import { Card } from "@/components/ui/card";
 import { StatCard } from "@/components/dashboard/stat-card";
 import { StatsLineChart } from "@/components/dashboard/stats-line-chart";
+import { BreakdownList } from "@/components/dashboard/breakdown-list";
 import { RatingBreakdownChart } from "@/components/dashboard/rating-breakdown-chart";
 import { CountryBreakdown } from "@/components/dashboard/country-breakdown";
 import { WorldMap } from "@/components/dashboard/world-map";
@@ -121,19 +122,19 @@ export function AnalyticsView({
             <Card className="p-5">
               <h3 className="text-sm font-semibold text-zinc-900">{dict.stats.device}</h3>
               <div className="mt-4">
-                <RatingBreakdownChart data={stats.devices} />
+                <BreakdownList data={stats.devices} iconSet="device" emptyLabel={dict.stats.noData} />
               </div>
             </Card>
             <Card className="p-5">
               <h3 className="text-sm font-semibold text-zinc-900">{dict.stats.os}</h3>
               <div className="mt-4">
-                <RatingBreakdownChart data={stats.operatingSystems} iconSet="os" />
+                <BreakdownList data={stats.operatingSystems} iconSet="os" emptyLabel={dict.stats.noData} />
               </div>
             </Card>
             <Card className="p-5">
               <h3 className="text-sm font-semibold text-zinc-900">{dict.stats.browser}</h3>
               <div className="mt-4">
-                <RatingBreakdownChart data={stats.browsers} iconSet="browser" />
+                <BreakdownList data={stats.browsers} iconSet="browser" emptyLabel={dict.stats.noData} />
               </div>
             </Card>
           </div>
