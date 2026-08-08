@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useSyncExternalStore } from "react";
-import { CopyIcon, CheckIcon } from "@/components/icons";
+import { CopyIcon, CheckIcon, DownloadIcon } from "@/components/icons";
 import { cn } from "@/lib/utils";
 
 /** L'origine ne change jamais pendant la vie de la page : rien à souscrire. */
@@ -25,14 +25,26 @@ type Snippet = {
  */
 export function SiteEmbedTabs({
   siteKey,
+  siteId,
   origin: fallbackOrigin,
   showWall,
+  wordpress,
 }: {
   siteKey: string;
+  /** Identifiant interne, uniquement pour l'URL de téléchargement du plugin. */
+  siteId: string;
   /** Origine de repli pour le rendu serveur. */
   origin: string;
   /** Le mur d'avis n'a de sens qu'en mode Reviews. */
   showWall: boolean;
+  /** Libellés du bloc plugin, affiché seulement sous l'onglet WordPress. */
+  wordpress: {
+    title: string;
+    desc: string;
+    cta: string;
+    hint: string;
+    manual: string;
+  };
 }) {
   // L'origine réelle du navigateur fait autorité : le snippet pointe donc
   // toujours vers le domaine depuis lequel le dashboard est consulté.
@@ -213,6 +225,34 @@ ${showWall ? `\n// Then place this in any page, via a Custom HTML block:\n// ${w
           )}
         </button>
       </div>
+
+      {/* Le plugin ne concerne que WordPress : inutile de l'exposer ailleurs. */}
+      {active.id === "wordpress" && (
+        <div className="border-b border-zinc-800 bg-purple-500/[0.07] px-4 py-3.5">
+          <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-start">
+            <div>
+              <p className="text-xs font-semibold text-white">{wordpress.title}</p>
+              <p className="mt-1 max-w-sm text-xs leading-relaxed text-zinc-400">
+                {wordpress.desc}
+              </p>
+            </div>
+
+            <a
+              href={`/api/plugin/wordpress?siteId=${encodeURIComponent(siteId)}`}
+              className="inline-flex h-9 shrink-0 items-center justify-center gap-1.5 rounded-lg bg-purple-600 px-3.5 text-xs font-medium text-white transition-all duration-150 hover:-translate-y-0.5 hover:bg-purple-500 active:translate-y-0"
+            >
+              <DownloadIcon className="h-3.5 w-3.5" />
+              {wordpress.cta}
+            </a>
+          </div>
+
+          <p className="mt-2.5 text-[11px] leading-relaxed text-zinc-500">{wordpress.hint}</p>
+
+          <p className="mt-3 border-t border-zinc-800 pt-3 text-[11px] text-zinc-500">
+            {wordpress.manual}
+          </p>
+        </div>
+      )}
 
       {active.steps && active.steps.length > 0 && (
         <ol className="space-y-1 border-b border-zinc-800 px-4 py-3 text-xs text-zinc-400">

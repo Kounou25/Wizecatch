@@ -314,6 +314,13 @@ const en = {
       "Only published reviews are shown. The layout follows the format set in Widget settings.",
     embedBothDesc:
       "Add the script once, then place the wall tag wherever you want your reviews to appear.",
+    wordpressTitle: "Using WordPress?",
+    wordpressDesc:
+      "Download a plugin with your site key already set. Upload, activate, done — no code to paste, and nothing lost when your theme updates.",
+    wordpressCta: "Download plugin",
+    wordpressHint:
+      "In the plugin settings you can collect statistics only, without showing the review form. Your reviews are never displayed until you add the [wizecatch_wall] shortcode to a page.",
+    wordpressManual: "Or add the script by hand:",
     modeLabel: "Mode",
     templateLabel: "Template",
     notFoundTitle: "Site not found",
@@ -870,6 +877,13 @@ const fr: Dictionary = {
       "Seuls les avis publiés sont affichés. La mise en page suit le format choisi dans les paramètres du widget.",
     embedBothDesc:
       "Ajoutez le script une fois, puis placez la balise du mur là où vous voulez voir vos avis.",
+    wordpressTitle: "Vous êtes sur WordPress ?",
+    wordpressDesc:
+      "Téléchargez un plugin avec votre clé déjà configurée. Téléversez, activez, c'est fait — aucun code à coller, et rien n'est perdu à la mise à jour de votre thème.",
+    wordpressCta: "Télécharger le plugin",
+    wordpressHint:
+      "Dans les réglages du plugin, vous pouvez ne collecter que les statistiques, sans afficher le formulaire d'avis. Vos avis ne s'affichent jamais tant que vous n'avez pas ajouté le shortcode [wizecatch_wall] à une page.",
+    wordpressManual: "Ou ajoutez le script à la main :",
     modeLabel: "Mode",
     templateLabel: "Modèle",
     notFoundTitle: "Site introuvable",

@@ -22,6 +22,11 @@
   var siteKey = script.getAttribute("data-site");
   if (!siteKey) return;
 
+  // data-form="off" : mesurer l'audience sans jamais solliciter le visiteur.
+  // Utile quand on veut les statistiques d'un site en mode Avis sans afficher
+  // le formulaire sur cette installation précise.
+  var formEnabled = script.getAttribute("data-form") !== "off";
+
   // L'origine de l'API est déduite de l'URL du script : pas de configuration
   // supplémentaire côté client, et cela fonctionne sur tous les environnements.
   var apiOrigin;
@@ -171,6 +176,17 @@
     }
   }
 
+  // Le script est censé être posé en pied de page, mais rien ne l'empêche de
+  // finir dans le <head>. Une réponse servie depuis le cache HTTP peut alors
+  // arriver avant que le mur existe dans le DOM : on attend le document.
+  function whenReady(callback) {
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", callback, { once: true });
+    } else {
+      callback();
+    }
+  }
+
   fetch(apiOrigin + "/api/w/" + encodeURIComponent(siteKey), {
     credentials: "omit",
   })
@@ -181,35 +197,40 @@
       if (!config || config.mode !== "reviews" || !config.template) return;
 
       // 1) Le mur d'avis, s'il y a un emplacement prévu dans la page.
-      mountWalls(config);
+      whenReady(function () {
+        mountWalls(config);
+      });
 
-      // 2) Le formulaire de collecte. Ne pas resolliciter quelqu'un qui a
-      //    déjà donné son avis.
-      if (alreadySubmitted()) return;
+      // 2) Le formulaire de collecte — sauf s'il est coupé sur cette page,
+      //    ou si le visiteur a déjà donné son avis.
+      if (!formEnabled || alreadySubmitted()) return;
 
       var trigger = (config.widget && config.widget.trigger) || "load";
 
-      if (trigger === "delay") {
-        setTimeout(function () {
-          mountForm(config);
-        }, 5000);
-      } else if (trigger === "scroll") {
-        var fired = false;
-        var onScroll = function () {
-          if (fired) return;
-          var scrolled =
-            (window.scrollY + window.innerHeight) /
-            Math.max(document.body.scrollHeight, 1);
-          if (scrolled > 0.5) {
-            fired = true;
-            window.removeEventListener("scroll", onScroll);
+      // mountForm écrit dans document.body : même attente que pour le mur.
+      whenReady(function () {
+        if (trigger === "delay") {
+          setTimeout(function () {
             mountForm(config);
-          }
-        };
-        window.addEventListener("scroll", onScroll, { passive: true });
-      } else {
-        mountForm(config);
-      }
+          }, 5000);
+        } else if (trigger === "scroll") {
+          var fired = false;
+          var onScroll = function () {
+            if (fired) return;
+            var scrolled =
+              (window.scrollY + window.innerHeight) /
+              Math.max(document.body.scrollHeight, 1);
+            if (scrolled > 0.5) {
+              fired = true;
+              window.removeEventListener("scroll", onScroll);
+              mountForm(config);
+            }
+          };
+          window.addEventListener("scroll", onScroll, { passive: true });
+        } else {
+          mountForm(config);
+        }
+      });
     })
     .catch(function () {});
 

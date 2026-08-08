@@ -67,7 +67,19 @@ export function OverviewTab({ site, dict }: { site: Site; dict: Dictionary }) {
             {isReviews ? dict.siteDetail.embedBothDesc : dict.siteDetail.embedScriptDesc}
           </p>
           <div className="mt-4">
-            <SiteEmbedTabs siteKey={siteKey} origin={origin} showWall={isReviews} />
+            <SiteEmbedTabs
+              siteKey={siteKey}
+              siteId={site.id}
+              origin={origin}
+              showWall={isReviews}
+              wordpress={{
+                title: dict.siteDetail.wordpressTitle,
+                desc: dict.siteDetail.wordpressDesc,
+                cta: dict.siteDetail.wordpressCta,
+                hint: dict.siteDetail.wordpressHint,
+                manual: dict.siteDetail.wordpressManual,
+              }}
+            />
           </div>
           {isReviews && (
             <p className="mt-3 text-xs text-zinc-400">{dict.siteDetail.wallHint}</p>
