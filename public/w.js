@@ -187,52 +187,70 @@
     }
   }
 
-  fetch(apiOrigin + "/api/w/" + encodeURIComponent(siteKey), {
-    credentials: "omit",
-  })
-    .then(function (response) {
-      return response.ok ? response.json() : null;
+  function loadConfig() {
+    fetch(apiOrigin + "/api/w/" + encodeURIComponent(siteKey), {
+      credentials: "omit",
     })
-    .then(function (config) {
-      if (!config || config.mode !== "reviews" || !config.template) return;
+      .then(function (response) {
+        return response.ok ? response.json() : null;
+      })
+      .then(function (config) {
+        if (!config || config.mode !== "reviews" || !config.template) return;
 
-      // 1) Le mur d'avis, s'il y a un emplacement prévu dans la page.
-      whenReady(function () {
-        mountWalls(config);
-      });
+        // 1) Le mur d'avis, s'il y a un emplacement prévu dans la page.
+        whenReady(function () {
+          mountWalls(config);
+        });
 
-      // 2) Le formulaire de collecte — sauf s'il est coupé sur cette page,
-      //    ou si le visiteur a déjà donné son avis.
-      if (!formEnabled || alreadySubmitted()) return;
+        // 2) Le formulaire de collecte — sauf s'il est coupé sur cette page,
+        //    ou si le visiteur a déjà donné son avis.
+        if (!formEnabled || alreadySubmitted()) return;
 
-      var trigger = (config.widget && config.widget.trigger) || "load";
+        var trigger = (config.widget && config.widget.trigger) || "load";
 
-      // mountForm écrit dans document.body : même attente que pour le mur.
-      whenReady(function () {
-        if (trigger === "delay") {
-          setTimeout(function () {
-            mountForm(config);
-          }, 5000);
-        } else if (trigger === "scroll") {
-          var fired = false;
-          var onScroll = function () {
-            if (fired) return;
-            var scrolled =
-              (window.scrollY + window.innerHeight) /
-              Math.max(document.body.scrollHeight, 1);
-            if (scrolled > 0.5) {
-              fired = true;
-              window.removeEventListener("scroll", onScroll);
+        // mountForm écrit dans document.body : même attente que pour le mur.
+        whenReady(function () {
+          if (trigger === "delay") {
+            setTimeout(function () {
               mountForm(config);
-            }
-          };
-          window.addEventListener("scroll", onScroll, { passive: true });
-        } else {
-          mountForm(config);
-        }
-      });
-    })
-    .catch(function () {});
+            }, 5000);
+          } else if (trigger === "scroll") {
+            var fired = false;
+            var onScroll = function () {
+              if (fired) return;
+              var scrolled =
+                (window.scrollY + window.innerHeight) /
+                Math.max(document.body.scrollHeight, 1);
+              if (scrolled > 0.5) {
+                fired = true;
+                window.removeEventListener("scroll", onScroll);
+                mountForm(config);
+              }
+            };
+            window.addEventListener("scroll", onScroll, { passive: true });
+          } else {
+            mountForm(config);
+          }
+        });
+      })
+      .catch(function () {});
+  }
+
+  // Un site en « statistiques seules » n'a besoin d'aucune configuration :
+  // ni formulaire, ni mur dans la page. Inutile alors de faire l'aller-retour
+  // réseau et de télécharger les avis publiés à chaque page vue.
+  //
+  // Quand le formulaire est actif, on part immédiatement : attendre le DOM
+  // retarderait l'affichage du widget pour rien.
+  if (formEnabled) {
+    loadConfig();
+  } else {
+    whenReady(function () {
+      if (document.querySelector("[data-wizecatch-wall]")) {
+        loadConfig();
+      }
+    });
+  }
 
   // ---------------------------------------------------------------------------
   // Formulaire d'avis
