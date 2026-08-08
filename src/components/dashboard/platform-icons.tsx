@@ -1,3 +1,4 @@
+import type { OperatingSystem, Browser } from "@/lib/mock-data";
 import {
   siApple,
   siAndroid,
@@ -37,7 +38,7 @@ const EDGE: PlatformIcon = {
  * (`parseOs` / `parseBrowser`) : toute divergence ferait disparaître l'icône
  * en silence, exactement comme les drapeaux indexés sur le mauvais champ.
  */
-export const osIcons: Record<string, PlatformIcon> = {
+export const osIcons: Record<OperatingSystem, PlatformIcon> = {
   Windows: WINDOWS,
   macOS: fromBrand(siApple),
   iOS: fromBrand(siApple),
@@ -45,7 +46,7 @@ export const osIcons: Record<string, PlatformIcon> = {
   Linux: fromBrand(siLinux),
 };
 
-export const browserIcons: Record<string, PlatformIcon> = {
+export const browserIcons: Record<Browser, PlatformIcon> = {
   Chrome: fromBrand(siGooglechrome),
   Safari: fromBrand(siSafari),
   Firefox: fromBrand(siFirefoxbrowser),
@@ -55,6 +56,6 @@ export const browserIcons: Record<string, PlatformIcon> = {
 export type IconSet = "os" | "browser";
 
 export function platformIcon(set: IconSet, label: string): PlatformIcon | null {
-  const table = set === "os" ? osIcons : browserIcons;
+  const table: Record<string, PlatformIcon> = set === "os" ? osIcons : browserIcons;
   return table[label] ?? null;
 }

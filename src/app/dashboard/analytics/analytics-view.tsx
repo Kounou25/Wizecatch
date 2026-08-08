@@ -127,13 +127,13 @@ export function AnalyticsView({
             <Card className="p-5">
               <h3 className="text-sm font-semibold text-zinc-900">{dict.stats.os}</h3>
               <div className="mt-4">
-                <RatingBreakdownChart data={stats.operatingSystems} />
+                <RatingBreakdownChart data={stats.operatingSystems} iconSet="os" />
               </div>
             </Card>
             <Card className="p-5">
               <h3 className="text-sm font-semibold text-zinc-900">{dict.stats.browser}</h3>
               <div className="mt-4">
-                <RatingBreakdownChart data={stats.browsers} />
+                <RatingBreakdownChart data={stats.browsers} iconSet="browser" />
               </div>
             </Card>
           </div>

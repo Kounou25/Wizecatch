@@ -174,14 +174,14 @@ export function StatsTab({ site, dict }: { site: Site; dict: Dictionary }) {
                 {isPending ? (
                   <ChartSkeleton />
                 ) : (
-                  <RatingBreakdownChart data={data!.operatingSystems} />
+                  <RatingBreakdownChart data={data!.operatingSystems} iconSet="os" />
                 )}
               </div>
             </Card>
             <Card className="p-5">
               <h3 className="text-sm font-semibold text-zinc-900">{dict.stats.browser}</h3>
               <div className="mt-4">
-                {isPending ? <ChartSkeleton /> : <RatingBreakdownChart data={data!.browsers} />}
+                {isPending ? <ChartSkeleton /> : <RatingBreakdownChart data={data!.browsers} iconSet="browser" />}
               </div>
             </Card>
           </div>
