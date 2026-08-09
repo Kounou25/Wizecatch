@@ -1,14 +1,18 @@
 import { listSites } from "@/lib/admin/queries";
-import { AdminTable, Cell, PageTitle } from "@/components/admin/admin-table";
+import { AdminTable, Row, Cell, PageTitle, Badge } from "@/components/admin/admin-ui";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminSitesPage() {
   const sites = await listSites();
+  const active = sites.filter((site) => !site.archived).length;
 
   return (
     <>
-      <PageTitle title="Sites" subtitle="Every site connected to the platform." />
+      <PageTitle
+        title="Sites"
+        subtitle={`${sites.length} sites shown · ${active} active`}
+      />
 
       <AdminTable
         headers={["Site", "Domain", "Owner", "Mode", "Created"]}
@@ -16,22 +20,24 @@ export default async function AdminSitesPage() {
         empty="No sites yet."
       >
         {sites.map((site) => (
-          <tr key={site.id}>
+          <Row key={site.id}>
             <Cell>
               <span className="flex items-center gap-2">
                 {site.name}
-                {site.archived && (
-                  <span className="rounded bg-zinc-100 px-1.5 py-0.5 text-[10px] text-zinc-500">
-                    archived
-                  </span>
-                )}
+                {site.archived && <Badge>archived</Badge>}
               </span>
             </Cell>
             <Cell muted>{site.domain}</Cell>
             <Cell muted>{site.ownerEmail}</Cell>
-            <Cell muted>{site.mode}</Cell>
-            <Cell muted>{new Date(site.createdAt).toLocaleDateString("en-GB")}</Cell>
-          </tr>
+            <Cell>
+              <Badge tone={site.mode === "reviews" ? "purple" : "zinc"}>{site.mode}</Badge>
+            </Cell>
+            <Cell muted>
+              <span className="tabular-nums">
+                {new Date(site.createdAt).toLocaleDateString("en-GB")}
+              </span>
+            </Cell>
+          </Row>
         ))}
       </AdminTable>
     </>

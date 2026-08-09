@@ -1,5 +1,5 @@
 import { listAudit } from "@/lib/admin/queries";
-import { AdminTable, Cell, PageTitle } from "@/components/admin/admin-table";
+import { AdminTable, Row, Cell, PageTitle } from "@/components/admin/admin-ui";
 
 export const dynamic = "force-dynamic";
 
@@ -19,8 +19,12 @@ export default async function AdminAuditPage() {
         empty="No administrative action recorded yet."
       >
         {entries.map((entry) => (
-          <tr key={entry.id}>
-            <Cell muted>{new Date(entry.createdAt).toLocaleString("en-GB")}</Cell>
+          <Row key={entry.id}>
+            <Cell muted>
+              <span className="whitespace-nowrap tabular-nums">
+                {new Date(entry.createdAt).toLocaleString("en-GB")}
+              </span>
+            </Cell>
             <Cell muted>{entry.actorEmail ?? "—"}</Cell>
             <Cell>
               <code className="rounded bg-zinc-100 px-1.5 py-0.5 text-xs text-zinc-700">
@@ -37,7 +41,7 @@ export default async function AdminAuditPage() {
                 "—"
               )}
             </Cell>
-          </tr>
+          </Row>
         ))}
       </AdminTable>
     </>

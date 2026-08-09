@@ -1,11 +1,17 @@
 import Link from "next/link";
 import { listReviews } from "@/lib/admin/queries";
-import { AdminTable, Cell, PageTitle } from "@/components/admin/admin-table";
+import { AdminTable, Row, Cell, PageTitle, Badge } from "@/components/admin/admin-ui";
 import { ReviewModeration } from "@/components/admin/review-moderation";
 
 export const dynamic = "force-dynamic";
 
 const FILTERS = ["all", "pending", "published", "hidden"];
+
+const TONES: Record<string, "amber" | "emerald" | "zinc"> = {
+  pending: "amber",
+  published: "emerald",
+  hidden: "zinc",
+};
 
 export default async function AdminReviewsPage({
   searchParams,
@@ -23,15 +29,15 @@ export default async function AdminReviewsPage({
         subtitle="Moderation across every site — for spam and abuse."
       />
 
-      <div className="mb-4 flex flex-wrap gap-1">
+      <div className="mb-4 inline-flex gap-0.5 rounded-lg bg-zinc-100 p-0.5">
         {FILTERS.map((filter) => (
           <Link
             key={filter}
             href={`/admin/reviews?status=${filter}`}
-            className={`rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors duration-150 ${
+            className={`rounded-md px-3 py-1.5 text-xs font-medium capitalize transition-colors duration-150 ${
               filter === current
-                ? "bg-zinc-900 text-white"
-                : "bg-white text-zinc-600 ring-1 ring-zinc-200 hover:bg-zinc-50"
+                ? "bg-white text-zinc-900 shadow-sm"
+                : "text-zinc-500 hover:text-zinc-800"
             }`}
           >
             {filter}
@@ -45,26 +51,34 @@ export default async function AdminReviewsPage({
         empty="No reviews match this filter."
       >
         {reviews.map((review) => (
-          <tr key={review.id}>
+          <Row key={review.id}>
             <Cell>{review.siteName}</Cell>
             <Cell muted>{review.authorName ?? "—"}</Cell>
             <Cell>
               <span className="flex items-center gap-2">
                 {review.rating !== null && (
-                  <span className="shrink-0 text-xs text-amber-600">{review.rating}/5</span>
+                  <span className="shrink-0 text-xs font-medium tabular-nums text-amber-600">
+                    {review.rating}/5
+                  </span>
                 )}
                 {/* Tronqué : la table doit rester lisible même avec un pavé. */}
-                <span className="line-clamp-2 max-w-md text-xs text-zinc-600">
+                <span className="line-clamp-2 max-w-sm text-xs text-zinc-600">
                   {review.comment ?? "—"}
                 </span>
               </span>
             </Cell>
-            <Cell muted>{review.status}</Cell>
-            <Cell muted>{new Date(review.createdAt).toLocaleDateString("en-GB")}</Cell>
+            <Cell>
+              <Badge tone={TONES[review.status] ?? "zinc"}>{review.status}</Badge>
+            </Cell>
+            <Cell muted>
+              <span className="tabular-nums">
+                {new Date(review.createdAt).toLocaleDateString("en-GB")}
+              </span>
+            </Cell>
             <Cell>
               <ReviewModeration reviewId={review.id} status={review.status} />
             </Cell>
-          </tr>
+          </Row>
         ))}
       </AdminTable>
     </>

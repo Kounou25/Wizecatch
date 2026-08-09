@@ -58,6 +58,57 @@ export async function getOverview(): Promise<AdminOverview> {
   };
 }
 
+export type AdminSeries = {
+  signups: { date: string; value: number }[];
+  sessions: { date: string; value: number }[];
+  reviews: { date: string; value: number }[];
+};
+
+/**
+ * Courbes d'activité de la plateforme sur N jours.
+ *
+ * Les trois séries sont comptées en mémoire plutôt que par trois agrégations
+ * SQL : on ne récupère que la colonne de date, et le back-office n'a pas le
+ * volume qui justifierait des fonctions dédiées.
+ *
+ * Les jours vides sont comblés à zéro — sans quoi la courbe relierait deux
+ * points distants et donnerait une lecture fausse de l'activité.
+ */
+export async function getSeries(days = 30): Promise<AdminSeries> {
+  const { admin } = await requireAdmin();
+
+  const from = new Date(Date.now() - (days - 1) * 86_400_000);
+  from.setUTCHours(0, 0, 0, 0);
+  const fromIso = from.toISOString();
+
+  const [signups, sessions, reviews] = await Promise.all([
+    admin.from("profiles").select("created_at").gte("created_at", fromIso),
+    admin.from("sessions").select("started_at").gte("started_at", fromIso),
+    admin.from("reviews").select("created_at").gte("created_at", fromIso),
+  ]);
+
+  const calendar: string[] = [];
+  for (let i = 0; i < days; i++) {
+    const day = new Date(from.getTime() + i * 86_400_000);
+    calendar.push(day.toISOString().slice(0, 10));
+  }
+
+  const tally = (rows: unknown[] | null, field: string) => {
+    const counts = new Map<string, number>();
+    for (const row of (rows ?? []) as Record<string, string>[]) {
+      const day = String(row[field]).slice(0, 10);
+      counts.set(day, (counts.get(day) ?? 0) + 1);
+    }
+    return calendar.map((date) => ({ date, value: counts.get(date) ?? 0 }));
+  };
+
+  return {
+    signups: tally(signups.data, "created_at"),
+    sessions: tally(sessions.data, "started_at"),
+    reviews: tally(reviews.data, "created_at"),
+  };
+}
+
 export type AdminUserRow = {
   id: string;
   email: string;
