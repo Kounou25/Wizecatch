@@ -22,7 +22,13 @@ const avatarColors = [
  */
 const MIN_USERS = 25;
 
-type PublicStats = { users: number; reviews: number; sites: number };
+type PublicStats = {
+  users: number;
+  reviews: number;
+  sites: number;
+  /** Photos de profil réelles — sans nom ni identifiant associé. */
+  avatars: string[];
+};
 
 /**
  * Preuve sociale du haut de page.
@@ -35,6 +41,39 @@ type PublicStats = { users: number; reviews: number; sites: number };
  * se sont inscrits à un outil de collecte d'avis, pas pour devenir le visage
  * de sa page d'accueil. Cela demanderait leur consentement explicite.
  */
+/**
+ * Photo de profil d'un compte réel.
+ *
+ * Repli silencieux sur un cercle neutre si l'image échoue : les URL Google
+ * expirent, et une vignette cassée en haut de la page d'accueil coûte plus
+ * cher que l'absence d'un visage.
+ */
+function RealAvatar({ src, zIndex }: { src: string; zIndex: number }) {
+  const [failed, setFailed] = useState(false);
+
+  if (failed) {
+    return (
+      <span
+        style={{ zIndex }}
+        className="-ml-2 h-10 w-10 rounded-full bg-zinc-100 ring-2 ring-white first:ml-0"
+      />
+    );
+  }
+
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={src}
+      alt=""
+      loading="lazy"
+      referrerPolicy="no-referrer"
+      onError={() => setFailed(true)}
+      style={{ zIndex }}
+      className="-ml-2 h-10 w-10 rounded-full object-cover ring-2 ring-white first:ml-0"
+    />
+  );
+}
+
 export function SocialProof({ dict }: { dict: Dictionary }) {
   const [stats, setStats] = useState<PublicStats | null>(null);
 
@@ -54,8 +93,32 @@ export function SocialProof({ dict }: { dict: Dictionary }) {
     };
   }, []);
 
-  const faces = getTestimonials(dict).slice(0, 7);
   const format = (value: number) => value.toLocaleString("en-US");
+
+  // Les vraies photos de profil quand il y en a. Les comptes créés par email
+  // n'en ont pas : on complète alors avec les initiales des témoignages, sans
+  // jamais mélanger une photo réelle et un persona sur le même visage.
+  const realAvatars = stats?.avatars ?? [];
+  const personas = getTestimonials(dict).slice(0, Math.max(0, 7 - realAvatars.length));
+
+  // Les données n'arrivent qu'après hydratation. Sans cet état d'attente, la
+  // page affichait sept personas puis les remplaçait par les vraies photos —
+  // un changement de contenu visible. On réserve la place à la place.
+  if (!stats) {
+    return (
+      <div className="mt-8">
+        <div className="flex items-center">
+          {[0, 1, 2, 3, 4, 5, 6].map((index) => (
+            <span
+              key={index}
+              className="-ml-2 h-10 w-10 rounded-full bg-zinc-100 ring-2 ring-white first:ml-0"
+            />
+          ))}
+        </div>
+        <p className="mt-3 h-5 max-w-md" />
+      </div>
+    );
+  }
 
   // Les chiffres ne remplacent la phrase qualitative qu'une fois crédibles.
   const withNumbers = stats !== null && stats.users >= MIN_USERS;
@@ -75,14 +138,17 @@ export function SocialProof({ dict }: { dict: Dictionary }) {
   return (
     <div className="mt-8 animate-slide-up-fade">
       <div className="flex items-center">
-        {faces.map((testimonial, index) => (
+        {realAvatars.map((url, index) => (
+          <RealAvatar key={url} src={url} zIndex={20 - index} />
+        ))}
+
+        {personas.map((testimonial, index) => (
           <span
             key={testimonial.id}
-            style={{ zIndex: faces.length - index }}
+            style={{ zIndex: 12 - index }}
             className={`-ml-2 flex h-10 w-10 items-center justify-center rounded-full text-xs font-semibold ring-2 ring-white first:ml-0 ${
               avatarColors[index % avatarColors.length]
             }`}
-            title={testimonial.authorName}
           >
             {testimonial.authorName
               .split(" ")

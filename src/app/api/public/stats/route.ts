@@ -18,10 +18,19 @@ export async function GET() {
   const supabase = createAdminClient();
   const rows = { count: "exact" as const, head: true };
 
-  const [users, reviews, sites] = await Promise.all([
+  const [users, reviews, sites, avatars] = await Promise.all([
     supabase.from("profiles").select("id", rows),
     supabase.from("reviews").select("id", rows),
     supabase.from("sites").select("id", rows).is("archived_at", null),
+    // Uniquement l'URL de l'image, et rien d'autre : ni identifiant, ni nom,
+    // ni email. Une photo isolée sur une page publique reste attribuable, mais
+    // on n'y ajoute pas de quoi identifier la personne nommément.
+    supabase
+      .from("profiles")
+      .select("avatar_url")
+      .not("avatar_url", "is", null)
+      .order("created_at", { ascending: true })
+      .limit(8),
   ]);
 
   return NextResponse.json(
@@ -29,6 +38,9 @@ export async function GET() {
       users: users.count ?? 0,
       reviews: reviews.count ?? 0,
       sites: sites.count ?? 0,
+      avatars: ((avatars.data ?? []) as { avatar_url: string }[])
+        .map((row) => row.avatar_url)
+        .filter(Boolean),
     },
     {
       headers: {
