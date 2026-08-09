@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import Link, { useLinkStatus } from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import {
@@ -19,6 +19,29 @@ const LINKS = [
   { href: "/admin/reviews", label: "Reviews", icon: MessageSquareIcon },
   { href: "/admin/audit", label: "Audit log", icon: ActivityIcon },
 ];
+
+/**
+ * Point d'attente sur le lien cliqué.
+ *
+ * Complète `loading.tsx` : le squelette confirme l'arrivée, ce point confirme
+ * le clic. Il doit être rendu en permanence et ne varier que par l'opacité —
+ * l'afficher conditionnellement décalerait le libellé au moment du clic.
+ *
+ * Doit être un descendant du <Link> pour que le hook voie son état.
+ */
+function LinkPending() {
+  const { pending } = useLinkStatus();
+
+  return (
+    <span
+      aria-hidden="true"
+      className={cn(
+        "ml-auto h-1.5 w-1.5 shrink-0 rounded-full bg-current transition-opacity duration-150",
+        pending ? "animate-pulse opacity-70" : "opacity-0",
+      )}
+    />
+  );
+}
 
 export function AdminSidebar({ email }: { email: string }) {
   const pathname = usePathname();
@@ -53,6 +76,7 @@ export function AdminSidebar({ email }: { email: string }) {
             >
               <Icon className="h-4 w-4 shrink-0" />
               {link.label}
+              <LinkPending />
             </Link>
           );
         })}

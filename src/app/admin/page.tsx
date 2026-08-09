@@ -3,6 +3,7 @@ import { FlagIcon } from "@/components/flag-icon";
 import { UserAvatar } from "@/components/admin/user-avatar";
 import { countryName } from "@/lib/geo/countries";
 import { StatsLineChart } from "@/components/dashboard/stats-line-chart";
+import { SegmentFilter, buildHref } from "@/components/admin/filter-bar";
 import {
   PageTitle,
   Panel,
@@ -19,13 +20,26 @@ import {
 
 export const dynamic = "force-dynamic";
 
-export default async function AdminOverviewPage() {
+const PERIODS = [
+  { value: "7", label: "7 days" },
+  { value: "30", label: "30 days" },
+  { value: "90", label: "90 days" },
+];
+
+export default async function AdminOverviewPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ days?: string }>;
+}) {
+  const { days: raw } = await searchParams;
+  // Périodes fermées : une valeur libre ferait agréger toute la table.
+  const days = ["7", "30", "90"].includes(raw ?? "") ? Number(raw) : 30;
   // Les trois lectures sont indépendantes : les lancer en parallèle évite
   // d'empiler trois allers-retours avant le premier octet rendu.
   const [data, series, geo, recent] = await Promise.all([
-    getOverview(),
-    getSeries(30),
-    getGeo(30),
+    getOverview(days),
+    getSeries(days),
+    getGeo(days),
     listUsers(),
   ]);
 
@@ -45,7 +59,14 @@ export default async function AdminOverviewPage() {
     <>
       <PageTitle
         title="Overview"
-        subtitle="The whole platform at a glance — last 30 days."
+        subtitle={`The whole platform at a glance — last ${days} days.`}
+        action={
+          <SegmentFilter
+            options={PERIODS}
+            current={String(days)}
+            hrefFor={(value) => buildHref("/admin", { days: value })}
+          />
+        }
       />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -64,16 +85,16 @@ export default async function AdminOverviewPage() {
         />
         <KpiCard
           label="Visits"
-          value={data.sessions30d}
+          value={data.sessionsInPeriod}
           icon={ActivityIcon}
           tone="amber"
-          hint="last 30 days"
+          hint={`last ${days} days`}
         />
         <KpiCard
           label="Reviews"
-          value={data.reviews30d}
+          value={data.reviewsInPeriod}
           icon={MessageSquareIcon}
-          hint="last 30 days"
+          hint={`last ${days} days`}
         />
       </div>
 
@@ -110,7 +131,7 @@ export default async function AdminOverviewPage() {
       </div>
 
       <div className="mt-4 grid gap-4 lg:grid-cols-2">
-        <Panel title="Top countries" hint="All traffic, last 30 days">
+        <Panel title="Top countries" hint={`All traffic, last ${days} days`}>
           {geo.countries.length === 0 ? (
             <p className="py-6 text-center text-sm text-zinc-400">No traffic yet.</p>
           ) : (
@@ -142,7 +163,7 @@ export default async function AdminOverviewPage() {
           )}
         </Panel>
 
-        <Panel title="Top cities" hint="All traffic, last 30 days">
+        <Panel title="Top cities" hint={`All traffic, last ${days} days`}>
           {geo.cities.length === 0 ? (
             <p className="py-6 text-center text-sm text-zinc-400">No city data yet.</p>
           ) : (

@@ -15,16 +15,16 @@ export type AdminOverview = {
   newUsers7d: number;
   sites: number;
   activeSites: number;
-  sessions30d: number;
-  reviews30d: number;
+  sessionsInPeriod: number;
+  reviewsInPeriod: number;
   planSplit: { plan: string; count: number }[];
 };
 
-export async function getOverview(): Promise<AdminOverview> {
+export async function getOverview(days = 30): Promise<AdminOverview> {
   const { admin } = await requireAdmin();
 
-  const since = (days: number) =>
-    new Date(Date.now() - days * 86_400_000).toISOString();
+  const since = (span: number) =>
+    new Date(Date.now() - span * 86_400_000).toISOString();
 
   // `head: true` ne rapatrie aucune ligne : seul le compte traverse le réseau.
   const rows = { count: "exact" as const, head: true };
@@ -35,8 +35,8 @@ export async function getOverview(): Promise<AdminOverview> {
       admin.from("profiles").select("id", rows).gte("created_at", since(7)),
       admin.from("sites").select("id", rows),
       admin.from("sites").select("id", rows).is("archived_at", null),
-      admin.from("sessions").select("id", rows).gte("started_at", since(30)),
-      admin.from("reviews").select("id", rows).gte("created_at", since(30)),
+      admin.from("sessions").select("id", rows).gte("started_at", since(days)),
+      admin.from("reviews").select("id", rows).gte("created_at", since(days)),
       admin.from("profiles").select("plan"),
     ]);
 
@@ -50,8 +50,8 @@ export async function getOverview(): Promise<AdminOverview> {
     newUsers7d: newUsers7d.count ?? 0,
     sites: sites.count ?? 0,
     activeSites: activeSites.count ?? 0,
-    sessions30d: sessions30d.count ?? 0,
-    reviews30d: reviews30d.count ?? 0,
+    sessionsInPeriod: sessions30d.count ?? 0,
+    reviewsInPeriod: reviews30d.count ?? 0,
     planSplit: [...split.entries()]
       .map(([plan, count]) => ({ plan, count }))
       .sort((a, b) => b.count - a.count),
@@ -231,22 +231,39 @@ export type AdminSiteRow = {
   name: string;
   domain: string;
   mode: string;
+  publicKey: string;
   ownerEmail: string;
   archived: boolean;
   createdAt: string;
 };
 
-export async function listSites(userId?: string): Promise<AdminSiteRow[]> {
+export async function listSites(filters: {
+  userId?: string;
+  search?: string;
+  mode?: string;
+  status?: string;
+} = {}): Promise<AdminSiteRow[]> {
   const { admin } = await requireAdmin();
 
   let query = admin
     .from("sites")
-    .select("id, name, domain, mode, archived_at, created_at, profiles(email)")
+    .select("id, name, domain, mode, public_key, archived_at, created_at, profiles(email)")
     .order("created_at", { ascending: false })
     .limit(100);
 
   // Permet d'arriver depuis la fiche d'un utilisateur, pour le support.
-  if (userId) query = query.eq("user_id", userId);
+  if (filters.userId) query = query.eq("user_id", filters.userId);
+  if (filters.mode && filters.mode !== "all") query = query.eq("mode", filters.mode);
+
+  if (filters.status === "active") query = query.is("archived_at", null);
+  if (filters.status === "archived") query = query.not("archived_at", "is", null);
+
+  if (filters.search?.trim()) {
+    // Jokers PostgREST échappés : une recherche sur « % » ne doit pas
+    // renvoyer la table entière.
+    const term = filters.search.trim().replace(/[%,()]/g, "");
+    query = query.or(`name.ilike.%${term}%,domain.ilike.%${term}%`);
+  }
 
   const { data, error } = await query;
 
@@ -261,6 +278,7 @@ export async function listSites(userId?: string): Promise<AdminSiteRow[]> {
       name: string;
       domain: string;
       mode: string;
+      public_key: string;
       archived_at: string | null;
       created_at: string;
       profiles: { email: string } | { email: string }[] | null;
@@ -272,6 +290,7 @@ export async function listSites(userId?: string): Promise<AdminSiteRow[]> {
       name: site.name,
       domain: site.domain,
       mode: site.mode,
+      publicKey: site.public_key,
       ownerEmail: owner?.email ?? "—",
       archived: site.archived_at !== null,
       createdAt: site.created_at,
@@ -281,25 +300,41 @@ export async function listSites(userId?: string): Promise<AdminSiteRow[]> {
 
 export type AdminReviewRow = {
   id: string;
+  siteId: string;
   siteName: string;
   status: string;
   templateId: string;
   authorName: string | null;
+  authorEmail: string | null;
   comment: string | null;
   rating: number | null;
   createdAt: string;
 };
 
-export async function listReviews(status = "all"): Promise<AdminReviewRow[]> {
+export async function listReviews(filters: {
+  status?: string;
+  search?: string;
+  siteId?: string;
+} = {}): Promise<AdminReviewRow[]> {
   const { admin } = await requireAdmin();
 
   let query = admin
     .from("reviews")
-    .select("id, status, template_id, author_name, comment, rating, created_at, sites(name)")
+    .select(
+      "id, site_id, status, template_id, author_name, author_email, comment, rating, created_at, sites(name)",
+    )
     .order("created_at", { ascending: false })
     .limit(100);
 
-  if (status !== "all") query = query.eq("status", status);
+  if (filters.status && filters.status !== "all") query = query.eq("status", filters.status);
+  if (filters.siteId && filters.siteId !== "all") query = query.eq("site_id", filters.siteId);
+
+  if (filters.search?.trim()) {
+    const term = filters.search.trim().replace(/[%,()]/g, "");
+    query = query.or(
+      `comment.ilike.%${term}%,author_name.ilike.%${term}%,author_email.ilike.%${term}%`,
+    );
+  }
 
   const { data, error } = await query;
   if (error) {
@@ -310,9 +345,11 @@ export async function listReviews(status = "all"): Promise<AdminReviewRow[]> {
   return ((data ?? []) as unknown[]).map((row) => {
     const review = row as {
       id: string;
+      site_id: string;
       status: string;
       template_id: string;
       author_name: string | null;
+      author_email: string | null;
       comment: string | null;
       rating: number | null;
       created_at: string;
@@ -322,15 +359,30 @@ export async function listReviews(status = "all"): Promise<AdminReviewRow[]> {
 
     return {
       id: review.id,
+      siteId: review.site_id,
       siteName: site?.name ?? "—",
       status: review.status,
       templateId: review.template_id,
       authorName: review.author_name,
+      authorEmail: review.author_email,
       comment: review.comment,
       rating: review.rating,
       createdAt: review.created_at,
     };
   });
+}
+
+/** Sites existants, pour alimenter le filtre de la page Reviews. */
+export async function listSiteOptions(): Promise<{ id: string; name: string }[]> {
+  const { admin } = await requireAdmin();
+
+  const { data } = await admin
+    .from("sites")
+    .select("id, name")
+    .order("name", { ascending: true })
+    .limit(200);
+
+  return (data ?? []) as { id: string; name: string }[];
 }
 
 export type AuditRow = {
