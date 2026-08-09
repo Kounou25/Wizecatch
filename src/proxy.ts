@@ -41,6 +41,16 @@ export async function proxy(request: NextRequest) {
 
   const { pathname } = request.nextUrl;
 
+  // Le back-office ne s'annonce pas : un visiteur non administrateur reçoit un
+  // 404, pas une redirection. Rien n'indique que /admin existe.
+  //
+  // Ce n'est qu'un premier filtre — le proxy ne vérifie que la connexion. Le
+  // droit d'accès réel est contrôlé par requireAdmin() côté serveur, qui est
+  // la seule frontière sur laquelle on s'appuie.
+  if (!user && pathname.startsWith("/admin")) {
+    return NextResponse.rewrite(new URL("/404", request.url));
+  }
+
   // Non connecté sur le dashboard → login, en mémorisant la destination.
   if (!user && pathname.startsWith("/dashboard")) {
     const url = request.nextUrl.clone();
