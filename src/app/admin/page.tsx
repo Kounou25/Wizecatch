@@ -1,4 +1,7 @@
-import { getOverview, getSeries, listUsers } from "@/lib/admin/queries";
+import { getOverview, getSeries, getGeo, listUsers } from "@/lib/admin/queries";
+import { FlagIcon } from "@/components/flag-icon";
+import { UserAvatar } from "@/components/admin/user-avatar";
+import { countryName } from "@/lib/geo/countries";
 import { StatsLineChart } from "@/components/dashboard/stats-line-chart";
 import {
   PageTitle,
@@ -19,11 +22,17 @@ export const dynamic = "force-dynamic";
 export default async function AdminOverviewPage() {
   // Les trois lectures sont indépendantes : les lancer en parallèle évite
   // d'empiler trois allers-retours avant le premier octet rendu.
-  const [data, series, recent] = await Promise.all([
+  const [data, series, geo, recent] = await Promise.all([
     getOverview(),
     getSeries(30),
+    getGeo(30),
     listUsers(),
   ]);
+
+  // La barre est proportionnelle au premier rang : avec un pays dominant,
+  // rapporter au total réduirait tous les autres à un trait invisible.
+  const maxCountry = Math.max(...geo.countries.map((c) => c.count), 1);
+  const maxCity = Math.max(...geo.cities.map((c) => c.count), 1);
 
   const conversion =
     data.users > 0
@@ -100,6 +109,67 @@ export default async function AdminOverviewPage() {
         </Panel>
       </div>
 
+      <div className="mt-4 grid gap-4 lg:grid-cols-2">
+        <Panel title="Top countries" hint="All traffic, last 30 days">
+          {geo.countries.length === 0 ? (
+            <p className="py-6 text-center text-sm text-zinc-400">No traffic yet.</p>
+          ) : (
+            <ul className="space-y-1">
+              {geo.countries.map((entry) => (
+                <li
+                  key={entry.label}
+                  className="relative flex h-9 items-center rounded-md"
+                >
+                  <div
+                    className="absolute inset-y-0 left-0 rounded-md bg-purple-100/70"
+                    style={{ width: `${Math.max((entry.count / maxCountry) * 100, 4)}%` }}
+                    aria-hidden="true"
+                  />
+                  <div className="relative flex w-full items-center justify-between gap-3 px-2.5">
+                    <span className="flex min-w-0 items-center gap-2">
+                      <FlagIcon country={entry.label} className="h-3.5 w-5" />
+                      <span className="truncate text-sm text-zinc-700">
+                        {countryName(entry.label)}
+                      </span>
+                    </span>
+                    <span className="shrink-0 text-sm font-medium tabular-nums text-zinc-900">
+                      {entry.count.toLocaleString("en-US")}
+                    </span>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Panel>
+
+        <Panel title="Top cities" hint="All traffic, last 30 days">
+          {geo.cities.length === 0 ? (
+            <p className="py-6 text-center text-sm text-zinc-400">No city data yet.</p>
+          ) : (
+            <ul className="space-y-1">
+              {geo.cities.map((entry) => (
+                <li
+                  key={entry.label}
+                  className="relative flex h-9 items-center rounded-md"
+                >
+                  <div
+                    className="absolute inset-y-0 left-0 rounded-md bg-sky-100/70"
+                    style={{ width: `${Math.max((entry.count / maxCity) * 100, 4)}%` }}
+                    aria-hidden="true"
+                  />
+                  <div className="relative flex w-full items-center justify-between gap-3 px-2.5">
+                    <span className="truncate text-sm text-zinc-700">{entry.label}</span>
+                    <span className="shrink-0 text-sm font-medium tabular-nums text-zinc-900">
+                      {entry.count.toLocaleString("en-US")}
+                    </span>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Panel>
+      </div>
+
       <Panel title="Latest signups" className="mt-4">
         {recent.length === 0 ? (
           <p className="py-6 text-center text-sm text-zinc-400">No accounts yet.</p>
@@ -107,7 +177,12 @@ export default async function AdminOverviewPage() {
           <ul className="divide-y divide-zinc-100">
             {recent.slice(0, 8).map((user) => (
               <li key={user.id} className="flex items-center justify-between gap-3 py-2.5">
-                <span className="flex min-w-0 items-center gap-2">
+                <span className="flex min-w-0 items-center gap-2.5">
+                  <UserAvatar
+                    name={user.fullName}
+                    email={user.email}
+                    src={user.avatarUrl}
+                  />
                   <span className="truncate text-sm text-zinc-800">{user.email}</span>
                   {user.isAdmin && <Badge tone="red">admin</Badge>}
                 </span>

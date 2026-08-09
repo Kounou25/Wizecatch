@@ -1,6 +1,8 @@
 import { listUsers } from "@/lib/admin/queries";
 import { AdminTable, Row, Cell, PageTitle, Badge } from "@/components/admin/admin-ui";
 import { PlanSelect } from "@/components/admin/plan-select";
+import { UserAvatar } from "@/components/admin/user-avatar";
+import { UserActions } from "@/components/admin/user-actions";
 
 export const dynamic = "force-dynamic";
 
@@ -39,19 +41,32 @@ export default async function AdminUsersPage({
       </form>
 
       <AdminTable
-        headers={["Email", "Name", "Sites", "Plan", "Joined"]}
+        headers={["Account", "Sites", "Plan", "Joined", ""]}
         isEmpty={users.length === 0}
         empty={q ? "No account matches this search." : "No accounts yet."}
       >
         {users.map((user) => (
           <Row key={user.id}>
             <Cell>
-              <span className="flex items-center gap-2">
-                {user.email}
-                {user.isAdmin && <Badge tone="red">admin</Badge>}
+              <span className="flex items-center gap-2.5">
+                <UserAvatar
+                  name={user.fullName}
+                  email={user.email}
+                  src={user.avatarUrl}
+                />
+                <span className="min-w-0">
+                  <span className="flex items-center gap-2">
+                    <span className="truncate font-medium">{user.email}</span>
+                    {user.isAdmin && <Badge tone="red">admin</Badge>}
+                  </span>
+                  {user.fullName && (
+                    <span className="block truncate text-xs text-zinc-400">
+                      {user.fullName}
+                    </span>
+                  )}
+                </span>
               </span>
             </Cell>
-            <Cell muted>{user.fullName ?? "—"}</Cell>
             <Cell muted>
               <span className="tabular-nums">{user.siteCount}</span>
             </Cell>
@@ -62,6 +77,9 @@ export default async function AdminUsersPage({
               <span className="tabular-nums">
                 {new Date(user.createdAt).toLocaleDateString("en-GB")}
               </span>
+            </Cell>
+            <Cell>
+              <UserActions userId={user.id} email={user.email} />
             </Cell>
           </Row>
         ))}

@@ -1,17 +1,37 @@
+import Link from "next/link";
 import { listSites } from "@/lib/admin/queries";
 import { AdminTable, Row, Cell, PageTitle, Badge } from "@/components/admin/admin-ui";
 
 export const dynamic = "force-dynamic";
 
-export default async function AdminSitesPage() {
-  const sites = await listSites();
+export default async function AdminSitesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ user?: string }>;
+}) {
+  const { user } = await searchParams;
+  const sites = await listSites(user);
   const active = sites.filter((site) => !site.archived).length;
 
   return (
     <>
       <PageTitle
         title="Sites"
-        subtitle={`${sites.length} sites shown · ${active} active`}
+        subtitle={
+          user
+            ? `${sites.length} sites for this account`
+            : `${sites.length} sites shown · ${active} active`
+        }
+        action={
+          user ? (
+            <Link
+              href="/admin/sites"
+              className="rounded-lg bg-white px-3 py-1.5 text-xs font-medium text-zinc-600 ring-1 ring-zinc-200 transition-colors duration-150 hover:bg-zinc-50"
+            >
+              Clear filter
+            </Link>
+          ) : undefined
+        }
       />
 
       <AdminTable

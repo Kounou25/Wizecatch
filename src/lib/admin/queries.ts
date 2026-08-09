@@ -58,6 +58,56 @@ export async function getOverview(): Promise<AdminOverview> {
   };
 }
 
+export type AdminGeo = {
+  countries: { label: string; count: number }[];
+  cities: { label: string; count: number }[];
+};
+
+/**
+ * Répartition géographique de tout le trafic de la plateforme.
+ *
+ * Agrégé en mémoire plutôt qu'en SQL : les fonctions `stats_*` sont en
+ * SECURITY INVOKER et filtrent donc par RLS sur l'utilisateur connecté — elles
+ * ne renverraient que les sites de l'administrateur, pas ceux de la plateforme.
+ *
+ * On ne lit que deux colonnes, et seulement sur la fenêtre demandée.
+ */
+export async function getGeo(days = 30, limit = 8): Promise<AdminGeo> {
+  const { admin } = await requireAdmin();
+
+  const since = new Date(Date.now() - days * 86_400_000).toISOString();
+
+  const { data, error } = await admin
+    .from("sessions")
+    .select("country, city")
+    .gte("started_at", since);
+
+  if (error) {
+    console.error("[admin] getGeo:", error.message);
+    return { countries: [], cities: [] };
+  }
+
+  const countries = new Map<string, number>();
+  const cities = new Map<string, number>();
+
+  for (const row of (data ?? []) as { country: string | null; city: string | null }[]) {
+    // Sans en-tête de géolocalisation, la valeur est nulle : on la compte
+    // comme inconnue plutôt que de la faire disparaître du total.
+    const country = row.country ?? "Unknown";
+    countries.set(country, (countries.get(country) ?? 0) + 1);
+
+    if (row.city) cities.set(row.city, (cities.get(row.city) ?? 0) + 1);
+  }
+
+  const top = (source: Map<string, number>) =>
+    [...source.entries()]
+      .map(([label, count]) => ({ label, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, limit);
+
+  return { countries: top(countries), cities: top(cities) };
+}
+
 export type AdminSeries = {
   signups: { date: string; value: number }[];
   sessions: { date: string; value: number }[];
@@ -113,6 +163,7 @@ export type AdminUserRow = {
   id: string;
   email: string;
   fullName: string | null;
+  avatarUrl: string | null;
   plan: string;
   isAdmin: boolean;
   createdAt: string;
@@ -124,7 +175,7 @@ export async function listUsers(search = ""): Promise<AdminUserRow[]> {
 
   let query = admin
     .from("profiles")
-    .select("id, email, full_name, plan, is_admin, created_at")
+    .select("id, email, full_name, avatar_url, plan, is_admin, created_at")
     .order("created_at", { ascending: false })
     .limit(100);
 
@@ -145,6 +196,7 @@ export async function listUsers(search = ""): Promise<AdminUserRow[]> {
     id: string;
     email: string;
     full_name: string | null;
+    avatar_url: string | null;
     plan: string;
     is_admin: boolean;
     created_at: string;
@@ -166,6 +218,7 @@ export async function listUsers(search = ""): Promise<AdminUserRow[]> {
     id: row.id,
     email: row.email,
     fullName: row.full_name,
+    avatarUrl: row.avatar_url,
     plan: row.plan,
     isAdmin: row.is_admin,
     createdAt: row.created_at,
@@ -183,14 +236,19 @@ export type AdminSiteRow = {
   createdAt: string;
 };
 
-export async function listSites(): Promise<AdminSiteRow[]> {
+export async function listSites(userId?: string): Promise<AdminSiteRow[]> {
   const { admin } = await requireAdmin();
 
-  const { data, error } = await admin
+  let query = admin
     .from("sites")
     .select("id, name, domain, mode, archived_at, created_at, profiles(email)")
     .order("created_at", { ascending: false })
     .limit(100);
+
+  // Permet d'arriver depuis la fiche d'un utilisateur, pour le support.
+  if (userId) query = query.eq("user_id", userId);
+
+  const { data, error } = await query;
 
   if (error) {
     console.error("[admin] listSites:", error.message);
