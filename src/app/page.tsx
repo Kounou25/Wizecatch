@@ -10,6 +10,7 @@ import { WallOfLove } from "@/components/marketing/wall-of-love";
 import { IntegrationsGrid } from "@/components/marketing/integrations-grid";
 import { FaqAccordion } from "@/components/marketing/faq-accordion";
 import { LiveActivity } from "@/components/marketing/live-activity";
+import { SocialProof } from "@/components/marketing/social-proof";
 import { TemplatePlayground } from "@/components/marketing/template-playground";
 import { EmbedTabs } from "@/components/marketing/embed-tabs";
 import { Reveal } from "@/components/reveal";
@@ -103,6 +104,8 @@ export default function Home() {
                   {dict.hero.ctaSecondary}
                 </Button>
               </div>
+
+              <SocialProof dict={dict} />
 
               <ul className="mt-8 flex flex-col gap-2.5 sm:flex-row sm:gap-6">
                 {trustPoints.map((point) => (

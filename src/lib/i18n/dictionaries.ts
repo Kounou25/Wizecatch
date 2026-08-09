@@ -52,6 +52,8 @@ const en = {
       "One line of code — copy, paste, done — gives you visitor analytics and a customer review widget. Nothing to build, nothing to maintain, no cookie banner to add.",
     ctaPrimary: "Start free",
     ctaSecondary: "See how it works",
+    socialProof:
+      "Join {users} people like you who have already collected {reviews} reviews with Wizecatch.",
     trust1: "Free forever for your first site",
     trust2: "No cookie banner required",
     trust3: "Installs in under 2 minutes",
@@ -640,6 +642,8 @@ const fr: Dictionary = {
       "Une ligne de code — copier, coller, c'est fait — vous donne vos statistiques de visite et un widget d'avis clients. Rien à construire, rien à maintenir, aucun bandeau cookies à ajouter.",
     ctaPrimary: "Commencer gratuitement",
     ctaSecondary: "Voir comment ça marche",
+    socialProof:
+      "Rejoignez {users} personnes comme vous qui ont déjà collecté {reviews} avis avec Wizecatch.",
     trust1: "Gratuit à vie pour votre premier site",
     trust2: "Aucun bandeau cookies nécessaire",
     trust3: "Installé en moins de 2 minutes",
