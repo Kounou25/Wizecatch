@@ -22,7 +22,11 @@ export async function GET(request: NextRequest) {
   }
 
   const siteId = request.nextUrl.searchParams.get("siteId");
-  const days = Number(request.nextUrl.searchParams.get("days") ?? 30);
+
+  // Périodes fermées : une valeur libre laisserait passer `days=100000`, donc
+  // une agrégation sur toute la table à chaque appel.
+  const requested = Number(request.nextUrl.searchParams.get("days") ?? 30);
+  const days = [7, 30, 90].includes(requested) ? requested : 30;
 
   if (!siteId) {
     return NextResponse.json({ error: "missing_site" }, { status: 400 });

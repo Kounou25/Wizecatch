@@ -2,6 +2,7 @@
 
 import { Card } from "@/components/ui/card";
 import { StatCard } from "@/components/dashboard/stat-card";
+import { DeltaBadge } from "@/components/dashboard/delta-badge";
 import { StatsLineChart } from "@/components/dashboard/stats-line-chart";
 import { BreakdownList } from "@/components/dashboard/breakdown-list";
 import { RatingBreakdownChart } from "@/components/dashboard/rating-breakdown-chart";
@@ -38,19 +39,34 @@ export function AnalyticsView({
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
+          label={dict.stats.uniqueVisitors}
+          value={stats.summary.uniqueVisitors.toLocaleString("en-US")}
+          icon={UsersIcon}
+          trend={<DeltaBadge delta={stats.comparison.uniqueVisitors} dict={dict} />}
+        />
+        <StatCard
           label={dict.dashboard.totalVisits}
           value={stats.summary.totalVisits.toLocaleString("en-US")}
           icon={ActivityIcon}
+          trend={<DeltaBadge delta={stats.comparison.totalVisits} dict={dict} />}
+        />
+        <StatCard
+          label={dict.stats.pageviews}
+          value={stats.summary.totalPageviews.toLocaleString("en-US")}
+          icon={BarChartIcon}
+          trend={<DeltaBadge delta={stats.comparison.totalPageviews} dict={dict} />}
         />
         <StatCard
           label={dict.stats.avgDuration}
           value={formatDuration(stats.summary.avgDuration)}
-          icon={UsersIcon}
+          icon={ActivityIcon}
+          trend={<DeltaBadge delta={stats.comparison.avgDuration} dict={dict} />}
         />
         <StatCard
           label={dict.stats.bounceRate}
           value={`${stats.summary.bounceRate}%`}
           icon={BarChartIcon}
+          trend={<DeltaBadge delta={stats.comparison.bounceRate} dict={dict} inverted />}
         />
         <StatCard
           label={dict.stats.countriesReached}
@@ -84,13 +100,15 @@ export function AnalyticsView({
             <Card className="p-5">
               <h3 className="text-sm font-semibold text-zinc-900">{dict.stats.sources}</h3>
               <div className="mt-4">
-                <RatingBreakdownChart data={stats.sources} />
+                <BreakdownList data={stats.sources} emptyLabel={dict.stats.noData} />
               </div>
             </Card>
             <Card className="p-5">
-              <h3 className="text-sm font-semibold text-zinc-900">{dict.stats.topPages}</h3>
+              <h3 className="text-sm font-semibold text-zinc-900">
+                {dict.stats.topPagesReal}
+              </h3>
               <div className="mt-4">
-                <RatingBreakdownChart data={stats.topPages} />
+                <BreakdownList data={stats.topPages} emptyLabel={dict.stats.noData} />
               </div>
             </Card>
           </div>
@@ -115,6 +133,13 @@ export function AnalyticsView({
             </h3>
             <div className="mt-4">
               <CountryBreakdown data={stats.countries} />
+            </div>
+          </Card>
+
+          <Card className="mt-4 p-5">
+            <h3 className="text-sm font-semibold text-zinc-900">{dict.stats.cities}</h3>
+            <div className="mt-4">
+              <BreakdownList data={stats.cities} emptyLabel={dict.stats.noData} />
             </div>
           </Card>
 

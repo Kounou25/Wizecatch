@@ -41,11 +41,15 @@ export async function POST(request: NextRequest) {
   let body: {
     k?: string; // clé publique du site
     s?: string; // id de session
-    e?: string; // "start" | "end"
+    e?: string; // "start" | "page" | "end"
     p?: string; // chemin
     r?: string; // referrer
     d?: number; // durée en secondes
     v?: number; // nombre de pages vues
+    l?: string; // langue du navigateur
+    us?: string; // utm_source
+    um?: string; // utm_medium
+    uc?: string; // utm_campaign
   };
 
   try {
@@ -76,6 +80,23 @@ export async function POST(request: NextRequest) {
 
   if (!site) {
     return NextResponse.json({ error: "not_found" }, { status: 404, headers: CORS });
+  }
+
+  const requestPath = typeof body.p === "string" ? body.p.slice(0, 512) : "/";
+
+  // -------------------------------------------------------------------------
+  // Page vue. Envoyée à chaque page, y compris la première, et à chaque
+  // navigation interne d'une application monopage.
+  // -------------------------------------------------------------------------
+  if (event === "page") {
+    const { error: pageError } = await supabase.from("pageviews").insert({
+      site_id: site.id,
+      session_id: sessionId,
+      path: requestPath,
+    });
+
+    if (pageError) console.error("[collect:page]", pageError.message);
+    return new NextResponse(null, { status: 204, headers: CORS });
   }
 
   // -------------------------------------------------------------------------
@@ -120,20 +141,29 @@ export async function POST(request: NextRequest) {
     .eq("visitor_hash", visitorHash)
     .gte("started_at", startOfDay.toISOString());
 
-  const path = typeof body.p === "string" ? body.p.slice(0, 512) : "/";
+  // Valeurs libres issues de l'URL : on les borne avant insertion.
+  const tag = (value: unknown, max = 120): string | null => {
+    if (typeof value !== "string") return null;
+    const trimmed = value.trim().slice(0, max);
+    return trimmed.length > 0 ? trimmed : null;
+  };
 
   const { error } = await supabase.from("sessions").upsert(
     {
       id: sessionId,
       site_id: site.id,
       visitor_hash: visitorHash,
-      entry_path: path,
+      entry_path: requestPath,
       country,
       city,
       device: parseDevice(userAgent),
       os: parseOs(userAgent),
       browser: parseBrowser(userAgent),
       source: parseSource(body.r ?? null, site.domain),
+      language: tag(body.l, 8),
+      utm_source: tag(body.us),
+      utm_medium: tag(body.um),
+      utm_campaign: tag(body.uc),
       is_new: (seenToday ?? 0) === 0,
       started_at: new Date().toISOString(),
       last_seen_at: new Date().toISOString(),

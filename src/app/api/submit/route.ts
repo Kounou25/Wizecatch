@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { parseGeo } from "@/lib/collect/enrich";
+import { parseGeo, parseDevice, parseOs, parseBrowser } from "@/lib/collect/enrich";
 import { FREE_PLAN_REVIEW_LIMIT, type ReviewTemplateId } from "@/lib/mock-data";
 
 /**
@@ -153,6 +153,11 @@ export async function POST(request: NextRequest) {
 
   const { country, city } = parseGeo(request.headers);
 
+  // Contexte technique de l'auteur. Sans lui, impossible de répondre à
+  // « mes visiteurs mobiles sont-ils moins satisfaits ? » — le croisement que
+  // seul un outil réunissant avis et audience peut produire.
+  const userAgent = request.headers.get("user-agent") ?? "";
+
   const { error } = await supabase.from("reviews").insert({
     site_id: site.id,
     template_id: site.template_id,
@@ -163,6 +168,9 @@ export async function POST(request: NextRequest) {
     author_email: clean(body.email, 160),
     country,
     city,
+    device: parseDevice(userAgent),
+    os: parseOs(userAgent),
+    browser: parseBrowser(userAgent),
     source_url: clean(body.url, 500),
     ...built.fields,
   });

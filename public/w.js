@@ -113,16 +113,76 @@
     }
   }
 
+  // Paramètres de campagne. Le référent seul ne distingue pas deux campagnes
+  // venues du même réseau ; les UTM sont dans l'URL, rien à deviner.
+  function utm() {
+    try {
+      var params = new URLSearchParams(location.search);
+      return {
+        us: params.get("utm_source") || "",
+        um: params.get("utm_medium") || "",
+        uc: params.get("utm_campaign") || "",
+      };
+    } catch {
+      return { us: "", um: "", uc: "" };
+    }
+  }
+
   // Début de visite — uniquement à la première page de la session.
   if (isNewSession) {
+    var campaign = utm();
     post({
       k: siteKey,
       s: sessionId,
       e: "start",
       p: location.pathname || "/",
       r: document.referrer || "",
+      // Langue déclarée par le navigateur, sans la variante régionale :
+      // « fr » suffit à décider d'une traduction, « fr-BE » est du détail.
+      l: (navigator.language || "").slice(0, 2).toLowerCase(),
+      us: campaign.us,
+      um: campaign.um,
+      uc: campaign.uc,
     });
   }
+
+  // Chaque page vue, y compris la première.
+  //
+  // Jusqu'ici seule la page d'entrée était enregistrée : un visiteur entré sur
+  // « / » puis passé par « /pricing » ne comptait que pour « / », ce qui rendait
+  // la carte des pages les plus vues fausse par construction.
+  var lastPath = location.pathname || "/";
+
+  function sendPageview(path) {
+    post({ k: siteKey, s: sessionId, e: "page", p: path });
+  }
+
+  sendPageview(lastPath);
+
+  // Applications monopages : l'URL change sans rechargement, donc sans nouvelle
+  // exécution du script. Sans ce relais, Next.js et React ne compteraient que
+  // la page d'arrivée — exactement le défaut que cette mesure vient corriger.
+  function onNavigate() {
+    var path = location.pathname || "/";
+    if (path === lastPath) return;
+    lastPath = path;
+
+    var views = parseInt(read(VIEWS_KEY) || "1", 10) + 1;
+    store(VIEWS_KEY, String(views));
+    sendPageview(path);
+  }
+
+  ["pushState", "replaceState"].forEach(function (method) {
+    var original = history[method];
+    if (typeof original !== "function") return;
+    history[method] = function () {
+      var result = original.apply(this, arguments);
+      onNavigate();
+      return result;
+    };
+  });
+
+  window.addEventListener("popstate", onNavigate);
 
   // Fin de visite — durée et nombre de pages.
   var ended = false;

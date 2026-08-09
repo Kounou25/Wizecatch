@@ -6,11 +6,14 @@ export function StatCard({
   value,
   icon: Icon,
   iconClassName,
+  trend,
 }: {
   label: string;
   value: string;
   icon: React.ComponentType<{ className?: string }>;
   iconClassName?: string;
+  /** Variation face à la période précédente, affichée à côté de la valeur. */
+  trend?: React.ReactNode;
 }) {
   return (
     <Card className="p-5">
@@ -23,9 +26,12 @@ export function StatCard({
         >
           <Icon className="h-4 w-4" />
         </span>
-        <div>
+        <div className="min-w-0">
           <p className="text-sm text-zinc-500">{label}</p>
-          <p className="text-xl font-semibold text-zinc-900">{value}</p>
+          <p className="flex items-baseline gap-2 text-xl font-semibold text-zinc-900">
+            {value}
+            {trend}
+          </p>
         </div>
       </div>
     </Card>
