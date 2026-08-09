@@ -28,6 +28,7 @@ export function PricingCard({
     limits: string;
     perMonth: string;
     billedYearly: string;
+    anchorHint: string;
     soon: string;
     mostPopular: string;
   };
@@ -41,6 +42,9 @@ export function PricingCard({
     : yearly
       ? Math.round(plan.priceYearly / 12)
       : plan.priceMonthly;
+
+  // L'ancrage n'a de sens que s'il y a un écart réel à montrer.
+  const showAnchor = yearly && !isFree && displayed < plan.priceMonthly;
 
   return (
     <Spotlight
@@ -69,7 +73,22 @@ export function PricingCard({
         {content.tagline}
       </p>
 
-      <div className="mt-5 flex items-baseline gap-1">
+      <div className="mt-5 flex items-baseline gap-1.5">
+        {/* Prix barré uniquement en vue annuelle, et c'est le VRAI tarif
+            mensuel : le client qui paie au mois débourse bien ce montant.
+            Aucun prix de référence inventé — un « avant » jamais pratiqué
+            serait une réduction trompeuse, sanctionnée comme telle. */}
+        {showAnchor && (
+          <span
+            className={cn(
+              "text-xl font-medium line-through decoration-2",
+              plan.highlighted ? "text-zinc-500" : "text-zinc-300",
+            )}
+            title={labels.anchorHint}
+          >
+            ${plan.priceMonthly}
+          </span>
+        )}
         <span className="text-4xl font-semibold tracking-tight">${displayed}</span>
         <span className={cn("text-sm", plan.highlighted ? "text-zinc-400" : "text-zinc-500")}>
           {labels.perMonth}

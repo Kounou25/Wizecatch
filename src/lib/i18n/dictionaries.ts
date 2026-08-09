@@ -54,6 +54,8 @@ const en = {
     ctaSecondary: "See how it works",
     socialProof:
       "Join {users} people like you who have already collected {reviews} reviews with Wizecatch.",
+    socialProofSoft:
+      "Used by freelancers, agencies and online stores to turn quiet visitors into public proof.",
     trust1: "Free forever for your first site",
     trust2: "No cookie banner required",
     trust3: "Installs in under 2 minutes",
@@ -137,6 +139,7 @@ const en = {
     saveBadge: "2 months free",
     perMonth: "/month",
     billedYearly: "billed yearly",
+    anchorHint: "Price when billed monthly",
     limitsLabel: "Limits",
     reassure1: "No credit card to start",
     reassure2: "Cancel in one click",
@@ -644,6 +647,8 @@ const fr: Dictionary = {
     ctaSecondary: "Voir comment ça marche",
     socialProof:
       "Rejoignez {users} personnes comme vous qui ont déjà collecté {reviews} avis avec Wizecatch.",
+    socialProofSoft:
+      "Utilisé par des indépendants, des agences et des boutiques en ligne pour transformer des visiteurs discrets en preuves publiques.",
     trust1: "Gratuit à vie pour votre premier site",
     trust2: "Aucun bandeau cookies nécessaire",
     trust3: "Installé en moins de 2 minutes",
@@ -727,6 +732,7 @@ const fr: Dictionary = {
     saveBadge: "2 mois offerts",
     perMonth: "/mois",
     billedYearly: "facturés à l'année",
+    anchorHint: "Tarif en paiement mensuel",
     limitsLabel: "Limites",
     reassure1: "Sans carte bancaire pour commencer",
     reassure2: "Résiliation en un clic",

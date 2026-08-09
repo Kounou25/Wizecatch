@@ -379,6 +379,7 @@ export default function Home() {
                       limits: dict.pricing.limitsLabel,
                       perMonth: dict.pricing.perMonth,
                       billedYearly: dict.pricing.billedYearly,
+                    anchorHint: dict.pricing.anchorHint,
                       soon: dict.pricing.soon,
                       mostPopular: dict.pricing.mostPopular,
                     }}

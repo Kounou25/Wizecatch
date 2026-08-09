@@ -13,11 +13,12 @@ const avatarColors = [
 ];
 
 /**
- * Seuil d'affichage.
+ * Seuil à partir duquel les chiffres sont affichés.
  *
- * « Rejoignez 3 personnes » dessert le produit plus qu'il ne le sert : sous ce
- * seuil, le bloc entier disparaît. Mieux vaut pas de preuve sociale qu'une
- * preuve sociale qui souligne le manque d'utilisateurs.
+ * En dessous, « Rejoignez 8 personnes » dessert le produit plus qu'il ne le
+ * sert. Le bloc reste visible, mais dans sa version qualitative : les visages
+ * et une phrase, sans chiffre. Il bascule seul sur les nombres le jour où
+ * ceux-ci deviennent un argument — rien à modifier.
  */
 const MIN_USERS = 25;
 
@@ -53,18 +54,23 @@ export function SocialProof({ dict }: { dict: Dictionary }) {
     };
   }, []);
 
-  if (!stats || stats.users < MIN_USERS) return null;
-
   const faces = getTestimonials(dict).slice(0, 7);
   const format = (value: number) => value.toLocaleString("en-US");
 
-  const text = dict.hero.socialProof
-    .replace("{users}", format(stats.users))
-    .replace("{reviews}", format(stats.reviews));
+  // Les chiffres ne remplacent la phrase qualitative qu'une fois crédibles.
+  const withNumbers = stats !== null && stats.users >= MIN_USERS;
+
+  const text = withNumbers
+    ? dict.hero.socialProof
+        .replace("{users}", format(stats.users))
+        .replace("{reviews}", format(stats.reviews))
+    : dict.hero.socialProofSoft;
 
   // Le texte porte deux nombres à mettre en valeur : on découpe sur eux plutôt
   // que d'injecter du HTML, pour que la traduction reste une simple chaîne.
-  const parts = text.split(new RegExp(`(${format(stats.users)}|${format(stats.reviews)})`));
+  const parts = withNumbers
+    ? text.split(new RegExp(`(${format(stats.users)}|${format(stats.reviews)})`))
+    : [text];
 
   return (
     <div className="mt-8 animate-slide-up-fade">
@@ -89,7 +95,8 @@ export function SocialProof({ dict }: { dict: Dictionary }) {
 
       <p className="mt-3 max-w-md text-sm text-zinc-500">
         {parts.map((part, index) =>
-          part === format(stats.users) || part === format(stats.reviews) ? (
+          withNumbers &&
+          (part === format(stats.users) || part === format(stats.reviews)) ? (
             <strong key={index} className="font-semibold text-purple-600">
               {part}
             </strong>
