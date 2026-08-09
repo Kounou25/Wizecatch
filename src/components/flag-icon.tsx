@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { FLAG_CODES } from "@/lib/geo/flag-codes";
 
 const DEFAULT_SIZE = "h-4 w-6";
 
@@ -14,12 +15,13 @@ const DEFAULT_SIZE = "h-4 w-6";
  * (Les emoji drapeaux seraient plus simples, mais Windows ne les rend pas.)
  */
 export function FlagIcon({ country, className }: { country: string; className?: string }) {
-  const code = (country ?? "").trim();
-  const isIso = /^[A-Za-z]{2}$/.test(code);
+  const code = (country ?? "").trim().toLowerCase();
 
   // Sans en-tête de géolocalisation, la base enregistre « Unknown » : un
   // globe neutre est plus honnête qu'un drapeau arbitraire ou un « ? ».
-  if (!isIso) {
+  // On vérifie aussi que le fichier existe, plutôt que de risquer une
+  // image cassée sur un code valide mais non fourni.
+  if (!FLAG_CODES.has(code)) {
     return (
       <span
         className={cn(
@@ -27,7 +29,7 @@ export function FlagIcon({ country, className }: { country: string; className?: 
           "flex shrink-0 items-center justify-center rounded-[3px] bg-zinc-100 text-zinc-400 ring-1 ring-black/10",
           className,
         )}
-        title={code || undefined}
+        title={country || undefined}
       >
         <svg viewBox="0 0 24 24" className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth="2">
           <circle cx="12" cy="12" r="9" />
@@ -38,10 +40,11 @@ export function FlagIcon({ country, className }: { country: string; className?: 
   }
 
   return (
-    // eslint-disable-next-line @next/next/no-img-element -- SVG statique déjà
-    // dimensionné : next/image n'apporterait qu'une indirection.
+    // SVG statique déjà dimensionné : next/image n'apporterait qu'une
+    // indirection, sans rien à optimiser.
+    // eslint-disable-next-line @next/next/no-img-element
     <img
-      src={`/flags/${code.toLowerCase()}.svg`}
+      src={`/flags/${code}.svg`}
       alt=""
       loading="lazy"
       className={cn(
