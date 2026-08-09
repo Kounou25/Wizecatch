@@ -7,13 +7,24 @@
  */
 
 /**
+ * Visite sans géolocalisation.
+ *
+ * L'en-tête `x-vercel-ip-country` n'existe qu'en production : en local, la
+ * fonction SQL retombe sur « Unknown ». C'est une valeur à traiter, pas un
+ * code pays — sans quoi elle s'affiche brute dans l'interface.
+ */
+export function isUnknownCountry(code: string | null | undefined): boolean {
+  return !code || code.trim().toLowerCase() === "unknown";
+}
+
+/**
  * Nom du pays à partir de son code ISO.
  *
  * Intl.DisplayNames est intégré au runtime — aucune table de 250 pays à
  * maintenir, et le nom suit la langue demandée.
  */
 export function countryName(code: string | null | undefined, locale = "en"): string {
-  if (!code) return "Unknown";
+  if (!code || isUnknownCountry(code)) return locale === "fr" ? "Inconnu" : "Unknown";
 
   // Certaines lignes anciennes portent déjà un nom complet plutôt qu'un code.
   if (code.length !== 2) return code;

@@ -6,7 +6,8 @@
       "Read(//c/Users/kouno/.claude/projects/c--Users-kouno-Downloads-wizecatch/**)",
       "Bash(powershell -Command 'Get-Process | Where-Object {$_.ProcessName -match '\\\\''node|npm'\\\\''} | Select-Object ProcessName, Id, CPU, StartTime, WorkingSet')",
       "Bash(npx tsc *)",
-      "Bash(npm run *)"
+      "Bash(npm run *)",
+      "Bash(node -e ' *)"
     ]
   }
 }
