@@ -13,6 +13,7 @@ import { HourlyChart } from "@/components/dashboard/hourly-chart";
 import { Skeleton } from "@/components/dashboard/skeleton";
 import { EmptyState } from "@/components/dashboard/empty-state";
 import { PeriodSelector, type Period } from "@/components/dashboard/period-selector";
+import { ExportButton } from "@/components/dashboard/export-button";
 import { DeltaBadge } from "@/components/dashboard/delta-badge";
 import { NpsCard } from "@/components/dashboard/nps-card";
 import { RatingByList } from "@/components/dashboard/rating-by-list";
@@ -97,7 +98,17 @@ export function StatsTab({ site, dict }: { site: Site; dict: Dictionary }) {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-end">
+      <div className="flex flex-wrap items-start justify-end gap-3">
+        <ExportButton
+          siteId={site.id}
+          type="visits"
+          label={dict.stats.exportVisits}
+          labels={{
+            pending: dict.stats.exportPending,
+            upgrade: dict.stats.exportUpgrade,
+            failed: dict.stats.exportFailed,
+          }}
+        />
         <PeriodSelector value={period} onChange={setPeriod} dict={dict} />
       </div>
 

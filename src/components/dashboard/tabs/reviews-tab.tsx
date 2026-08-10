@@ -9,6 +9,7 @@ import { EmptyState } from "@/components/dashboard/empty-state";
 import { ReviewCardSkeleton } from "@/components/dashboard/skeleton";
 import { InboxIcon } from "@/components/icons";
 import type { Site, Review, ReviewStatus } from "@/lib/mock-data";
+import { ExportButton } from "@/components/dashboard/export-button";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
 
 type StatusFilter = "all" | ReviewStatus;
@@ -79,7 +80,18 @@ export function ReviewsTab({ site, dict }: { site: Site; dict: Dictionary }) {
           </span>
         </h2>
 
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap items-start gap-2">
+          <ExportButton
+            siteId={site.id}
+            type="reviews"
+            label={dict.stats.exportReviews}
+            labels={{
+              pending: dict.stats.exportPending,
+              upgrade: dict.stats.exportUpgrade,
+              failed: dict.stats.exportFailed,
+            }}
+          />
+
           {(site.templateId === "star_rating" || site.templateId === "star_comment") && (
             <Select
               value={starFilter}
