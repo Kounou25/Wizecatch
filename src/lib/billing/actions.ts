@@ -15,7 +15,7 @@ import { productIdFor, type BillablePlan } from "@/lib/billing/products";
 
 function origin(): string {
   const configured = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "");
-  return configured || "http://localhost:3000";
+  return configured || "http://wizecatch.vercel.app";
 }
 
 /** Ouvre un paiement pour le plan demandé et renvoie l'URL de règlement. */
