@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { Navbar } from "@/components/marketing/navbar";
 import { Footer } from "@/components/marketing/footer";
 import { WidgetMockup } from "@/components/marketing/widget-mockup";
@@ -21,7 +20,7 @@ import { ScrollProgressBar } from "@/components/scroll-progress-bar";
 import { Button } from "@/components/ui/button";
 import { StatsLineChart } from "@/components/dashboard/stats-line-chart";
 import { useLanguage } from "@/components/providers/language-provider";
-import { cn, interpolate } from "@/lib/utils";
+import { interpolate } from "@/lib/utils";
 import { getFaqs, getTestimonials } from "@/lib/i18n/content";
 import { LifetimeOffer } from "@/components/marketing/lifetime-offer";
 import {
@@ -48,7 +47,6 @@ const previewTotalVisits = previewVisits.reduce((sum, point) => sum + point.valu
 
 export default function Home() {
   const { dict } = useLanguage();
-  const [yearly, setYearly] = useState(false);
 
   const steps = [
     { number: "01", icon: GlobeIcon, title: dict.howItWorks.step1Title, description: dict.howItWorks.step1Desc },
@@ -339,33 +337,16 @@ export default function Home() {
               </p>
               <p className="mt-3 text-zinc-600">{dict.pricing.subtitle}</p>
 
-              {/* Bascule mensuel / annuel — le badge « 2 mois offerts »
-                  fait le travail de conversion vers l'engagement annuel. */}
-              <div className="mt-8 inline-flex items-center gap-1 rounded-full bg-zinc-100 p-1">
-                <button
-                  type="button"
-                  onClick={() => setYearly(false)}
-                  className={cn(
-                    "rounded-full px-4 py-1.5 text-sm font-medium transition-all duration-150",
-                    !yearly ? "bg-white text-zinc-900 shadow-sm" : "text-zinc-500 hover:text-zinc-700",
-                  )}
-                >
-                  {dict.pricing.monthly}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setYearly(true)}
-                  className={cn(
-                    "flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium transition-all duration-150",
-                    yearly ? "bg-white text-zinc-900 shadow-sm" : "text-zinc-500 hover:text-zinc-700",
-                  )}
-                >
-                  {dict.pricing.yearly}
-                  <span className="rounded-full bg-purple-100 px-2 py-0.5 text-[11px] font-semibold text-purple-700">
-                    {dict.pricing.saveBadge}
-                  </span>
-                </button>
-              </div>
+              {/* Le bascule mensuel / annuel a été retiré : seuls des produits
+                  MENSUELS existent chez Dodo. Une page qui propose un
+                  engagement annuel impossible à acheter promet ce qu'elle ne
+                  peut pas tenir.
+
+                  Pour le rétablir : créer les deux produits annuels chez Dodo,
+                  renseigner leurs identifiants, puis restaurer ce bloc et
+                  l'état `yearly`. Les tarifs annuels sont déjà dans
+                  `pricingPlans` (priceYearly) et les libellés dans les
+                  dictionnaires. */}
             </Reveal>
 
             <div className="mt-12 grid gap-6 lg:grid-cols-3">
@@ -374,7 +355,7 @@ export default function Home() {
                   <PricingCard
                     plan={plan}
                     content={dict.pricing.plans[plan.id]}
-                    yearly={yearly}
+                    yearly={false}
                     labels={{
                       limits: dict.pricing.limitsLabel,
                       perMonth: dict.pricing.perMonth,

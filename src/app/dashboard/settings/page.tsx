@@ -12,6 +12,7 @@ import { interpolate } from "@/lib/utils";
 import { useLanguage } from "@/components/providers/language-provider";
 import { useCurrentUser } from "@/components/providers/user-provider";
 import { signOut } from "@/lib/auth/actions";
+import { BillingPanel } from "@/components/dashboard/billing-panel";
 
 export default function SettingsPage() {
   const { dict } = useLanguage();
@@ -95,6 +96,10 @@ export default function SettingsPage() {
           </Button>
         </form>
       </Card>
+
+      <div className="mt-6">
+        <BillingPanel />
+      </div>
 
       <Card className="mt-6 p-6">
         <div className="flex items-center justify-between">

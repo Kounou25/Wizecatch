@@ -109,3 +109,5 @@ select
      where table_name = 'profiles' and grantee = 'authenticated'
        and privilege_type = 'UPDATE')                        as colonnes_modifiables,
   (select count(*) from public.profiles where is_admin)      as administrateurs;
+
+

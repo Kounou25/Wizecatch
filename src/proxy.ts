@@ -76,6 +76,10 @@ export const config = {
     // routes publiques de collecte : appelées par des visiteurs anonymes, elles
     // n'ont pas de session à rafraîchir et un passage par le proxy leur
     // coûterait un appel réseau à Supabase sur chaque événement.
-    "/((?!_next/static|_next/image|favicon.ico|w\\.js|test-widget\\.html|api/collect|api/submit|api/w/|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
+    //
+    // `api/webhooks/` pour la même raison : Dodo appelle sans cookie de
+    // session, et coupe la connexion au bout de 15 secondes — un appel
+    // Supabase inutile grignote ce budget.
+    "/((?!_next/static|_next/image|favicon.ico|w\\.js|test-widget\\.html|api/collect|api/submit|api/w/|api/webhooks/|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
   ],
 };
