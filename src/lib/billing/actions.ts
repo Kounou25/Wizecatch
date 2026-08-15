@@ -1,7 +1,6 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
-import { createAdminClient } from "@/lib/supabase/admin";
 import { createDodoClient } from "@/lib/billing/dodo";
 import { productIdFor, type BillablePlan } from "@/lib/billing/products";
 
@@ -15,7 +14,9 @@ import { productIdFor, type BillablePlan } from "@/lib/billing/products";
 
 function origin(): string {
   const configured = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "");
-  return configured || "http://wizecatch.vercel.app";
+  // HTTPS impérativement : c'est l'URL de retour après paiement, et certains
+  // navigateurs refusent une redirection vers du HTTP depuis une page sécurisée.
+  return configured || "https://wizecatch.vercel.app";
 }
 
 /** Ouvre un paiement pour le plan demandé et renvoie l'URL de règlement. */
@@ -82,10 +83,10 @@ export async function openBillingPortal() {
 
   if (!user) return { url: null, error: "Vous devez être connecté." };
 
-  // La table est en lecture seule pour le client, mais on passe par le service
-  // role : on veut l'abonnement le plus récent, y compris non actif.
-  const admin = createAdminClient();
-  const { data: subscription } = await admin
+  // Client normal, donc RLS : la politique `subscriptions_select_own` suffit à
+  // lire son propre abonnement, quel que soit son statut. Contourner RLS ici
+  // serait un privilège sans contrepartie.
+  const { data: subscription } = await supabase
     .from("subscriptions")
     .select("provider_customer_id")
     .eq("user_id", user.id)

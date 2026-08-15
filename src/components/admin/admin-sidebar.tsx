@@ -10,6 +10,7 @@ import {
   MessageSquareIcon,
   ActivityIcon,
   LogOutIcon,
+  BarChartIcon,
 } from "@/components/icons";
 
 const LINKS = [
@@ -17,6 +18,7 @@ const LINKS = [
   { href: "/admin/users", label: "Users", icon: UsersIcon },
   { href: "/admin/sites", label: "Sites", icon: GlobeIcon },
   { href: "/admin/reviews", label: "Reviews", icon: MessageSquareIcon },
+  { href: "/admin/billing", label: "Billing", icon: BarChartIcon },
   { href: "/admin/audit", label: "Audit log", icon: ActivityIcon },
 ];
 
